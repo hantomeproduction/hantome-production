@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#000"/>
+  <g transform="translate(56, 186)">
+    <text x="200" y="90" font-family="Inter, sans-serif" font-weight="bold" font-size="60" fill="#fff" text-anchor="middle" letter-spacing="6">HANTŌME</text>
+    <path d="M 20 40 L 40 20 L 280 20" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <rect x="295" y="14" width="12" height="12" fill="#fff"/>
+    <path d="M 325 20 L 360 20 L 380 40 L 380 100 L 360 120 L 120 120" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <rect x="95" y="114" width="12" height="12" fill="#fff"/>
+    <path d="M 80 120 L 40 120 L 20 100 L 20 40" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round"/>
+  </g>
+</svg>
