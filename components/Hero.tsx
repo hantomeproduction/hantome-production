@@ -38,19 +38,18 @@ export const Hero: React.FC = () => {
             
             <div className="absolute inset-0 scale-[1.05] origin-center">
                 <video
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    preload="auto"
-                    poster="/hero-poster.jpg" 
-                    // ✨ 영상 데이터가 로드된 딱 그 순간부터 애니메이션 시작!
-                    onLoadedData={() => setIsLoaded(true)}
-                    // ✨ blur-none 적용됨!
-                    className="w-full h-full object-cover blur-none opacity-60 saturate-100 contrast-125"
-                >
-                    <source src="/hero-bg.mp4" type="video/mp4" />
-                </video>
+    autoPlay
+    loop
+    muted
+    playsInline
+    preload="auto"
+    poster="/hero-poster.jpg"
+    onLoadedData={() => setIsLoaded(true)}
+    // ✨ 바로 이 부분! 마이너스(-) 기호랑 deg를 꼭 넣어줘!
+    className="w-full h-full object-cover blur opacity-60 saturate-100 contrast-125 hue-rotate-[-80deg]"
+>
+    <source src="/hero-bg.mp4" type="video/mp4" />
+</video>
             </div>
 
             {/* 어두운 오버레이들 (배경과 함께 나타남) */}
