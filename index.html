@@ -1,271 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="robots" content="index, follow" />
-    <meta name="description" content="Hantōme Production - Virtual Artist Management & Creative Production. We define the undefined." />
-    <link rel="canonical" href="https://hantome.com/" />
-    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
-    <link rel="apple-touch-icon" href="/logo.svg" />
-    <meta property="og:image" content="/logo.svg" />
-    <title>Hantōme Production | Virtual Artist Management</title>
-    
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;800&family=Playfair+Display:ital,wght@1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
-    
-    <!-- Unicorn Studio Script -->
-    <script src="https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v2.0.5/dist/unicornStudio.umd.js"></script>
+import React, { useEffect, useState } from 'react';
+import { ArrowDown } from 'lucide-react';
+import { Reveal } from './Reveal';
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              background: '#050505',
-              'text-main': '#ffffff',
-              'text-sub': '#888888',
-              'border-custom': '#333333',
-            },
-            fontFamily: {
-              sans: ['Inter', 'sans-serif'],
-              serif: ['Playfair Display', 'serif'],
-              mono: ['JetBrains Mono', 'monospace'],
-            },
-            animation: {
-              'fade-in-up': 'fadeInUp 1s ease-out forwards',
-              'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-              'grain': 'grain 8s steps(10) infinite',
-            },
-            keyframes: {
-              fadeInUp: {
-                '0%': { opacity: '0', transform: 'translateY(20px)' },
-                '100%': { opacity: '1', transform: 'translateY(0)' },
-              },
-              grain: {
-                '0%, 100%': { transform: 'translate(0, 0)' },
-                '10%': { transform: 'translate(-5%, -10%)' },
-                '20%': { transform: 'translate(-15%, 5%)' },
-                '30%': { transform: 'translate(7%, -25%)' },
-                '40%': { transform: 'translate(-5%, 25%)' },
-                '50%': { transform: 'translate(-15%, 10%)' },
-                '60%': { transform: 'translate(15%, 0%)' },
-                '70%': { transform: 'translate(0%, 15%)' },
-                '80%': { transform: 'translate(3%, 35%)' },
-                '90%': { transform: 'translate(-10%, 10%)' },
-              }
-            }
-          }
-        }
-      }
-    </script>
+export const Hero: React.FC = () => {
+  const [currentDate, setCurrentDate] = useState<string>('');
+  const [isLoaded, setIsLoaded] = useState(false);
 
-    <!-- Global Styles -->
-    <style>
-      :root {
-        --bg-color: #050505;
-        --border-color: rgba(255, 255, 255, 0.15);
-      }
-      
-      body {
-        background-color: var(--bg-color);
-        color: white;
-        overflow-x: hidden;
-      }
+  useEffect(() => {
+    setIsLoaded(true);
+    const updateDate = () => {
+      const now = new Date();
+      const formattedDate = `${now.getDate()}.${String(now.getMonth() + 1).padStart(2, '0')}.${now.getFullYear()}`;
+      setCurrentDate(formattedDate);
+    };
 
-      html {
-        scroll-behavior: smooth;
-      }
+    updateDate();
+    const intervalId = setInterval(updateDate, 60000);
+    return () => clearInterval(intervalId);
+  }, []);
 
-      ::selection {
-        background: #ffffff;
-        color: #000000;
-        text-shadow: none;
-      }
+  const scrollToWork = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const element = document.getElementById('work');
+    if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
-      /* Custom Scrollbar */
-      ::-webkit-scrollbar {
-        width: 6px;
-        height: 6px;
-      }
-      ::-webkit-scrollbar-track {
-        background: #050505;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #333;
-        border-radius: 3px;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #555;
-      }
-
-      /* Noise Texture */
-      .bg-noise {
-        position: fixed;
-        top: -50%;
-        left: -50%;
-        right: -50%;
-        bottom: -50%;
-        width: 200%;
-        height: 200vh;
-        background: transparent url('http://assets.iceable.com/img/noise-transparent.png') repeat 0 0;
-        background-repeat: repeat;
-        animation: grain 8s steps(10) infinite;
-        opacity: 0.04;
-        visibility: visible;
-        pointer-events: none;
-        z-index: 9999;
-      }
-
-      /* Marquee Animation */
-      @keyframes marquee {
-        0% { transform: translateX(0); }
-        100% { transform: translateX(-100%); }
-      }
-      
-      @keyframes marquee-reverse {
-        0% { transform: translateX(-100%); }
-        100% { transform: translateX(0); }
-      }
-      
-      .animate-marquee {
-        animation: marquee 40s linear infinite;
-      }
-
-      .animate-marquee-reverse {
-        animation: marquee-reverse 40s linear infinite;
-      }
-
-      /* Refined Text Outline - Fixed overlapping strokes */
-      .text-outline {
-        color: #050505; /* Use background color to hide internal strokes */
-        -webkit-text-stroke: 1px rgba(255, 255, 255, 0.5);
-        paint-order: stroke fill;
-      }
-      
-      .no-scrollbar::-webkit-scrollbar {
-          display: none;
-      }
-      .no-scrollbar {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-      }
-      
-      /* Smooth reveal text */
-      .reveal-text {
-        clip-path: inset(0 0 0 0);
-        transition: clip-path 1s cubic-bezier(0.77, 0, 0.175, 1);
-      }
-
-      /* Badge Removal */
-      a[href*="unicorn.studio"], 
-      a[href*="unicorn.studio?utm_source=public-url"],
-      .us-branding, .us-logo, [data-us-project] > a {
-        display: none !important;
-        opacity: 0 !important;
-        visibility: hidden !important;
-        pointer-events: none !important;
-      }
-      
-      /* Specific rule requested by user */
-      a[href*="unicorn.studio?utm_source=public-url"] { display: none !important; }
-
-      /* Bot-only content: Visible to bots/screen readers, hidden from visual users */
-      .bot-only {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        white-space: nowrap;
-        border: 0;
-      }
-    </style>
-  <script type="importmap">
-{
-  "imports": {
-    "react": "https://esm.sh/react@^19.2.4",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
-    "react/": "https://esm.sh/react@^19.2.4/",
-    "lucide-react": "https://esm.sh/lucide-react@^0.563.0"
-  }
-}
-</script>
-<link rel="stylesheet" href="/index.css">
-</head>
-  <body>
-    <div id="root">
-      <div class="bot-only">
-        <header>
-          <h1>Hantōme Production</h1>
-          <p>Virtual Artist Management & Creative Production</p>
-          <p>Define the Undefined</p>
-        </header>
-        
-        <main>
-          <section id="about">
-            <h2>About Us</h2>
-            <article>
-              <h3>Philosophy</h3>
-              <p>Hantōme Production은 현실과 가상의 경계, 그 모호함(Hantōme) 속에 숨겨진 무한한 가능성을 탐구합니다. 우리는 정의되지 않은 당신의 색깔을 세상에 투영합니다.</p>
-            </article>
-            <article>
-              <h3>Vision</h3>
-              <p>단순한 음악 제작을 넘어, 버츄얼 아티스트의 고유한 서사와 정체성을 완성하는 크리에이티브 파트너로서 함께합니다.</p>
-            </article>
-            
-            <h3>Core Members</h3>
-            <ul>
-              <li><strong>Yoonhanee (윤하늬)</strong>: PRODUCER / PIANIST - 인디밴드 '와인루프' 세션 및 뮤지컬 음악감독 역임</li>
-              <li><strong>SeongChooon (성춘)</strong>: PRODUCER / BASSIST - 서인국, 김예지 등의 베이스 레코딩 세션</li>
-              <li><strong>Sero (세로)</strong>: PRODUCER / PIANIST - 김완선, 이세계아이돌, 크록티칼 등 협업</li>
-              <li><strong>JongGeun (종근)</strong>: DRUMMER - 현 인디밴드 멤버, 다양한 무대 세션 경험</li>
-              <li><strong>SoodanGod (수단갓)</strong>: GUITARIST - 올가미 밴드 기타리스트, 유튜브 수단갓 Music 채널 오너</li>
-            </ul>
-          </section>
-
-          <section id="portfolio">
-            <h2>Portfolio</h2>
-            <h3>Composition & Arrangement</h3>
-            <ul>
-              <li>블리즈 'Last Hope' | Concert ver.</li>
-              <li>블리즈 'Get Jinxed + Harder' | Cover</li>
-              <li>이세계아이돌 (ISEGYE IDOL) - SYZYGY (Band Ver.)</li>
-              <li>Ready Action (ft. 단군)</li>
-              <li>[청백가요대전] EXO - MAMA</li>
-            </ul>
-          </section>
-
-          <section id="services">
-            <h2>Services</h2>
-            <ul>
-              <li><strong>Original Sound Track</strong>: Composition, Arrangement, BGM</li>
-              <li><strong>Session & Cover</strong>: Inst Production, Live Session (Piano, Guitar, Bass, Drums)</li>
-              <li><strong>Mix & Master</strong>: Sound Engineering, Vocal Tune, Mixing, Mastering</li>
-              <li><strong>Vocal Directing</strong>: Recording, Direction, Vocal Guide, Chorus</li>
-            </ul>
-          </section>
-
-          <section id="contact">
-            <h2>Contact</h2>
-            <p>Ready to start? Let's Create.</p>
-            <p>Email: <a href="mailto:hantomeproduction@gmail.com">hantomeproduction@gmail.com</a></p>
-            <p>Socials: Youtube, Instagram, Twitter(X)</p>
-          </section>
-        </main>
-      </div>
-    </div>
-    <noscript>
-       <!-- Content duplicated in root for JS-enabled bots, kept here for non-JS bots -->
-       <p>Please enable JavaScript to view the full site.</p>
-    </noscript>
-    <div class="bg-noise"></div>
-  <script type="module" src="/index.tsx"></script>
-</body>
-</html>
+  return (
+    <section id="hero">
+  <h1>HANTŌME</h1>
+  <p>Define the Undefined</p>
+</section>
+  ); // 👈 여기가 닫혀야 빨간 줄이 사라져!
+}; // 👈 여기도 필수!
