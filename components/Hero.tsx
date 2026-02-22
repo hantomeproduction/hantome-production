@@ -4,13 +4,10 @@ import { Reveal } from './Reveal';
 
 export const Hero: React.FC = () => {
   const [currentDate, setCurrentDate] = useState<string>('');
-  // ✨ 1. 배경 로딩 상태 관리 (처음엔 false)
+  // ✨ 시작은 무조건 false (투명도 0 상태)
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    // ✨ 2. 컴포넌트가 마운트되자마자 로딩 상태를 true로 변경 (애니메이션 시작)
-    setIsLoaded(true);
-
     const updateDate = () => {
       const now = new Date();
       const formattedDate = `${now.getDate()}.${String(now.getMonth() + 1).padStart(2, '0')}.${now.getFullYear()}`;
@@ -33,41 +30,42 @@ export const Hero: React.FC = () => {
   return (
     <section id="hero" className="relative w-full h-screen overflow-hidden border-b border-white/5 bg-[#050505]">
         
-        {/* 🔒 [배경 시스템 컨테이너] 
-            - absolute: 스크롤 시 위로 올라감
-            - ✨ transition-opacity: 부드러운 페이드인 효과 적용 (1.5초 동안)
-            - ✨ isLoaded 상태에 따라 opacity-0 에서 opacity-100으로 변경됨
+        {/* 🔒 [배경 컨테이너] 
+            - transition-opacity duration-[2000ms]: 2초 동안 서서히 나타남
+            - blur-none: 윤환이가 요청한 대로 흐림 효과 제거!
         */}
-        <div className={`absolute inset-0 z-0 pointer-events-none overflow-hidden transition-opacity duration-1500 ease-out ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+        <div className={`absolute inset-0 z-0 pointer-events-none overflow-hidden transition-opacity duration-[2000ms] ease-in-out ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
             
-            <div className="absolute inset-0 scale-[1.15] origin-center">
-       <video
-    autoPlay
-    loop
-    muted
-    playsInline
-    preload="auto" /* ✨ 중요: 브라우저가 무조건 영상 전체를 미리 다운받도록 강제함 */
-    poster="/hero-poster.jpg" 
-    className="w-full h-full object-cover blur-md opacity-60 saturate-100 contrast-125"
->
-    <source src="/hero-bg.mp4" type="video/mp4" />
-</video>
+            <div className="absolute inset-0 scale-[1.05] origin-center">
+                <video
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    preload="auto"
+                    poster="/hero-poster.jpg" 
+                    // ✨ 영상 데이터가 로드된 딱 그 순간부터 애니메이션 시작!
+                    onLoadedData={() => setIsLoaded(true)}
+                    // ✨ blur-none 적용됨!
+                    className="w-full h-full object-cover blur-none opacity-60 saturate-100 contrast-125"
+                >
+                    <source src="/hero-bg.mp4" type="video/mp4" />
+                </video>
             </div>
 
-            {/* Overlays (배경과 함께 부드럽게 나타남) */}
+            {/* 어두운 오버레이들 (배경과 함께 나타남) */}
             <div className="absolute inset-0 bg-gradient-to-b from-[#050505]/40 via-transparent to-[#050505] z-10"></div>
             <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-90 z-10"></div>
             
-            {/* Grid Pattern */}
+            {/* 그리드 패턴 */}
             <div className="absolute inset-0 z-20 opacity-[0.03]" style={{ 
                 backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)', 
                 backgroundSize: '100px 100px' 
             }}></div>
         </div>
 
-        {/* Content Layer (텍스트 등) */}
+        {/* 텍스트 콘텐츠 레이어 (생략 없이 그대로 유지) */}
         <div className="relative z-40 h-full w-full max-w-[1920px] mx-auto px-6 flex flex-col">
-            
             <div className="pt-24 md:pt-20 flex justify-between items-start shrink-0">
                 <div className="font-mono text-[10px] md:text-xs text-gray-500 space-y-2 uppercase tracking-widest">
                     <p className="flex items-center gap-2">
@@ -119,6 +117,7 @@ export const Hero: React.FC = () => {
             </div>
         </div>
 
+        {/* 사이드 장식 텍스트 */}
         <div className="absolute left-6 top-1/2 -translate-y-1/2 hidden lg:block -rotate-90 origin-left z-30 pointer-events-none">
             <p className="text-white/[0.03] text-7xl font-bold tracking-tighter whitespace-nowrap">
                 VIRTUAL ARTIST
