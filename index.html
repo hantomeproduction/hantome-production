@@ -1,36 +1,33 @@
-import React, { useEffect, useState } from 'react';
-import { ArrowDown } from 'lucide-react';
-import { Reveal } from './Reveal';
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="index, follow" />
+    <meta name="description" content="Hantōme Production - Virtual Artist Management & Creative Production. We define the undefined." />
+    <link rel="canonical" href="https://hantome.com/" />
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <link rel="apple-touch-icon" href="/logo.svg" />
+    <meta property="og:image" content="/logo.svg" />
 
-export const Hero: React.FC = () => {
-  const [currentDate, setCurrentDate] = useState<string>('');
-  const [isLoaded, setIsLoaded] = useState(false);
+    <link rel="preload" as="video" href="/hero-bg.mp4" type="video/mp4" />
 
-  useEffect(() => {
-    setIsLoaded(true);
-    const updateDate = () => {
-      const now = new Date();
-      const formattedDate = `${now.getDate()}.${String(now.getMonth() + 1).padStart(2, '0')}.${now.getFullYear()}`;
-      setCurrentDate(formattedDate);
-    };
+    <title>Hantōme Production | Virtual Artist Management</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;800&family=Playfair+Display:ital,wght@1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <div id="root"></div>
 
-    updateDate();
-    const intervalId = setInterval(updateDate, 60000);
-    return () => clearInterval(intervalId);
-  }, []);
+    <div style="display: none;">
+      <section id="hero">
+        <h1>HANTŌME</h1>
+        <p>Define the Undefined</p>
+      </section>
+    </div>
 
-  const scrollToWork = (e: React.MouseEvent) => {
-    e.preventDefault();
-    const element = document.getElementById('work');
-    if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  return (
-    <section id="hero">
-  <h1>HANTŌME</h1>
-  <p>Define the Undefined</p>
-</section>
-  ); // 👈 여기가 닫혀야 빨간 줄이 사라져!
-}; // 👈 여기도 필수!
+    <script type="module" src="/src/index.tsx"></script>
+  </body>
+</html>
