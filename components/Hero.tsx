@@ -2,14 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ArrowDown } from 'lucide-react';
 import { Reveal } from './Reveal';
 
-declare global {
-  interface Window {
-    UnicornStudio: {
-      init: () => void;
-      isInitialized: boolean;
-    };
-  }
-}
+// ⚠️ 상단에 import heroVideo... 이런 줄이 있다면 무조건 지워야 해! ⚠️
 
 export const Hero: React.FC = () => {
   const [currentDate, setCurrentDate] = useState<string>('');
@@ -23,11 +16,6 @@ export const Hero: React.FC = () => {
 
     updateDate();
     const intervalId = setInterval(updateDate, 60000);
-
-    if (window.UnicornStudio) {
-      window.UnicornStudio.init();
-    }
-
     return () => clearInterval(intervalId);
   }, []);
 
@@ -40,34 +28,37 @@ export const Hero: React.FC = () => {
   };
 
   return (
-    <section id="hero" className="h-[100dvh] w-full relative overflow-hidden bg-[#050505] border-b border-white/5">
+    <section id="hero" className="h-[100dvh] w-full relative bg-[#050505] border-b border-white/5">
         
-        {/* Background Layer */}
-        <div className="absolute inset-0 z-0 bg-[#050505] pointer-events-none">
-            <div 
-                data-us-project="wKlJV1dDvsNOPUoDt7JZ" 
-                style={{ width: '100%', height: '100%' }}
-                className="opacity-60 saturate-100 contrast-125"
-            ></div>
-
-            {/* Solid overlay to cover Unicorn Studio attribution/badge at bottom */}
-            <div className="absolute bottom-0 left-0 w-full h-[80px] z-[5] pointer-events-auto" style={{ backgroundColor: 'var(--bg-color)' }}></div>
+        {/* 고정 배경 컨테이너 */}
+        <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
             
-            {/* Gradient Overlays for better text contrast */}
+            <div className="absolute inset-0 scale-[1.15] origin-center">
+                <video
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="w-full h-full object-cover blur-3xl opacity-60 saturate-100 contrast-125"
+                >
+                    {/* ✅ public 폴더에 있으면 무조건 이렇게 써야 해! */}
+                    <source src="/hero-bg.mp4" type="video/mp4" />
+                </video>
+            </div>
+
+            {/* Overlays */}
             <div className="absolute inset-0 bg-gradient-to-b from-[#050505]/40 via-transparent to-[#050505] z-10"></div>
             <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-90 z-10"></div>
             
-            {/* Fine Grid Pattern */}
+            {/* Grid Pattern */}
             <div className="absolute inset-0 z-20 opacity-[0.03]" style={{ 
                 backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)', 
                 backgroundSize: '100px 100px' 
             }}></div>
         </div>
 
-        {/* Content Layer Container */}
-        <div className="relative z-40 h-full w-full max-w-[1920px] mx-auto px-6 flex flex-col">
-            
-            {/* Header Meta (Top aligned) */}
+        {/* Content Layer */}
+        <div className="relative z-40 h-full w-full max-w-[1920px] mx-auto px-6 flex flex-col bg-transparent">
             <div className="pt-24 md:pt-20 flex justify-between items-start shrink-0">
                 <div className="font-mono text-[10px] md:text-xs text-gray-500 space-y-2 uppercase tracking-widest">
                     <p className="flex items-center gap-2">
@@ -78,7 +69,6 @@ export const Hero: React.FC = () => {
                 </div>
             </div>
 
-            {/* Main Title (Centered vertically and horizontally) */}
             <div className="flex-1 flex flex-col items-center justify-center mix-blend-difference pb-20">
                 <Reveal>
                     <h1 className="text-[13vw] leading-[0.85] font-bold tracking-tighter text-white whitespace-nowrap select-none text-center">
@@ -96,7 +86,6 @@ export const Hero: React.FC = () => {
                 </Reveal>
             </div>
 
-            {/* Bottom Meta (Bottom aligned) */}
             <div className="pb-4 md:pb-8 flex items-end justify-between shrink-0">
                 <div 
                     onClick={scrollToWork}
@@ -121,7 +110,7 @@ export const Hero: React.FC = () => {
             </div>
         </div>
 
-        {/* Decorative Side Texts */}
+        {/* Decorative Texts */}
         <div className="absolute left-6 top-1/2 -translate-y-1/2 hidden lg:block -rotate-90 origin-left z-30 pointer-events-none">
             <p className="text-white/[0.03] text-7xl font-bold tracking-tighter whitespace-nowrap">
                 VIRTUAL ARTIST

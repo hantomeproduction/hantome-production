@@ -28,6 +28,28 @@ export const Home: React.FC = () => {
 
   return (
     <div className="antialiased text-white selection:bg-white selection:text-black bg-[#050505]">
+      
+      {/* 🦄 유니콘 스튜디오 뱃지 강제 숨기기 스타일 주입 */}
+      <style>
+        {`
+          /* 유니콘 스튜디오와 관련된 모든 링크, div, id를 찾아내서 없애버림 */
+          a[href*="unicorn.studio"], 
+          div[class*="unicorn-studio"], 
+          span[class*="unicorn-studio"],
+          [id*="unicorn-studio"] {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+            z-index: -9999 !important;
+            width: 0 !important;
+            height: 0 !important;
+            position: absolute !important;
+            top: -9999px !important;
+          }
+        `}
+      </style>
+
       <Navbar />
       <ScrollToTop />
       <main>
