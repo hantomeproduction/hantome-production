@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { ArrowDown } from 'lucide-react';
 import { Reveal } from './Reveal';
 
-// ⚠️ 상단에 import heroVideo... 이런 줄이 있다면 무조건 지워야 해! ⚠️
-
 export const Hero: React.FC = () => {
   const [currentDate, setCurrentDate] = useState<string>('');
 
@@ -28,10 +26,10 @@ export const Hero: React.FC = () => {
   };
 
   return (
-    <section id="hero" className="h-[100dvh] w-full relative bg-[#050505] border-b border-white/5">
+    <section id="hero" className="h-[100dvh] w-full relative border-b border-white/5">
         
-        {/* 고정 배경 컨테이너 */}
-        <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+        {/* 🔒 [배경 고정 시스템] - 뷰포트에 고정되어 스크롤의 영향을 받지 않음 */}
+        <div className="fixed inset-0 w-full h-full z-0 pointer-events-none overflow-hidden bg-[#050505]">
             
             <div className="absolute inset-0 scale-[1.15] origin-center">
                 <video
@@ -39,26 +37,28 @@ export const Hero: React.FC = () => {
                     loop
                     muted
                     playsInline
-                    className="w-full h-full object-cover blur-3xl opacity-60 saturate-100 contrast-125"
+                    /* ✨ blur-md 적용: 물결 모양이 더 선명하게 보일 거야! */
+                    className="w-full h-full object-cover blur-sm opacity-60 saturate-100 contrast-125"
                 >
-                    {/* ✅ public 폴더에 있으면 무조건 이렇게 써야 해! */}
                     <source src="/hero-bg.mp4" type="video/mp4" />
                 </video>
             </div>
 
-            {/* Overlays */}
+            {/* Overlays: 텍스트 가독성을 위해 기존 그라데이션 유지 */}
             <div className="absolute inset-0 bg-gradient-to-b from-[#050505]/40 via-transparent to-[#050505] z-10"></div>
             <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-90 z-10"></div>
             
-            {/* Grid Pattern */}
+            {/* Fine Grid Pattern */}
             <div className="absolute inset-0 z-20 opacity-[0.03]" style={{ 
                 backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)', 
                 backgroundSize: '100px 100px' 
             }}></div>
         </div>
 
-        {/* Content Layer */}
+        {/* 📄 [콘텐츠 레이어] - 배경 위에서 스크롤되는 영역 */}
         <div className="relative z-40 h-full w-full max-w-[1920px] mx-auto px-6 flex flex-col bg-transparent">
+            
+            {/* Header Meta */}
             <div className="pt-24 md:pt-20 flex justify-between items-start shrink-0">
                 <div className="font-mono text-[10px] md:text-xs text-gray-500 space-y-2 uppercase tracking-widest">
                     <p className="flex items-center gap-2">
@@ -69,6 +69,7 @@ export const Hero: React.FC = () => {
                 </div>
             </div>
 
+            {/* Main Title */}
             <div className="flex-1 flex flex-col items-center justify-center mix-blend-difference pb-20">
                 <Reveal>
                     <h1 className="text-[13vw] leading-[0.85] font-bold tracking-tighter text-white whitespace-nowrap select-none text-center">
@@ -86,6 +87,7 @@ export const Hero: React.FC = () => {
                 </Reveal>
             </div>
 
+            {/* Bottom Meta */}
             <div className="pb-4 md:pb-8 flex items-end justify-between shrink-0">
                 <div 
                     onClick={scrollToWork}
@@ -110,7 +112,7 @@ export const Hero: React.FC = () => {
             </div>
         </div>
 
-        {/* Decorative Texts */}
+        {/* Decorative Side Texts */}
         <div className="absolute left-6 top-1/2 -translate-y-1/2 hidden lg:block -rotate-90 origin-left z-30 pointer-events-none">
             <p className="text-white/[0.03] text-7xl font-bold tracking-tighter whitespace-nowrap">
                 VIRTUAL ARTIST
