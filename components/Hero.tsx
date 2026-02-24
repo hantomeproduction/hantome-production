@@ -24,9 +24,7 @@ export const Hero: React.FC = () => {
     };
     updateDate();
     const dateInterval = setInterval(updateDate, 60000);
-
     const initialTimer = setTimeout(() => { setFade(true); }, 800);
-
     const tipInterval = setInterval(() => {
         setFade(false); 
         setTimeout(() => {
@@ -34,12 +32,7 @@ export const Hero: React.FC = () => {
             setFade(true); 
         }, 800); 
     }, 4500);
-
-    return () => {
-        clearInterval(dateInterval);
-        clearTimeout(initialTimer);
-        clearInterval(tipInterval);
-    };
+    return () => { clearInterval(dateInterval); clearTimeout(initialTimer); clearInterval(tipInterval); };
   }, []);
 
   const scrollToWork = (e: React.MouseEvent) => {
@@ -52,8 +45,7 @@ export const Hero: React.FC = () => {
     <section id="hero" className="relative w-full h-[100dvh] snap-start snap-always shrink-0 overflow-hidden border-b border-white/5 bg-[#050505]">
         <div className={`absolute inset-0 z-0 pointer-events-none overflow-hidden transition-opacity duration-[2000ms] ease-in-out ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
             <div className="absolute inset-0 scale-[1.05] origin-center">
-                <video
-                    autoPlay loop muted playsInline preload="auto" poster="/hero-poster.jpg"
+                <video autoPlay loop muted playsInline preload="auto" poster="/hero-poster.jpg"
                     onLoadedData={() => setIsLoaded(true)}
                     className="w-full h-full object-cover blur opacity-60 saturate-100 contrast-125 hue-rotate-[-80deg]"
                 >
@@ -76,34 +68,26 @@ export const Hero: React.FC = () => {
             
             <div className="flex-1 flex flex-col items-center justify-center mix-blend-difference pb-20">
                 <Reveal><h1 className="text-[16vw] md:text-[13vw] leading-[0.85] font-bold tracking-tighter text-white whitespace-nowrap select-none text-center">HANTŌME</h1></Reveal>
-                
                 <Reveal delay={200}>
                     <div className="flex items-center justify-center gap-6 mt-6 md:mt-8 opacity-90">
                         <span className="hidden md:block h-px w-16 md:w-24 bg-gradient-to-r from-transparent via-white/50 to-transparent"></span>
-                        {/* ✨ 슬로건 폰트: font-bold tracking-tighter (HANTŌME와 통일) */}
-                        <p className="text-xl md:text-3xl font-bold tracking-tighter text-white uppercase text-center">
-                            Define the Undefined
-                        </p>
+                        <p className="text-xl md:text-3xl font-medium tracking-tighter text-white text-center">Define the Undefined</p>
                         <span className="hidden md:block h-px w-16 md:w-24 bg-gradient-to-r from-transparent via-white/50 to-transparent"></span>
                     </div>
                 </Reveal>
-
                 <Reveal delay={300}>
                     <div className="mt-8 md:mt-10 flex justify-center">
                         <div className="inline-flex items-center gap-3 px-5 py-2.5 border border-white/10 bg-white/5 backdrop-blur-md rounded-full shadow-[0_0_20px_rgba(255,255,255,0.05)]">
+                            {/* ✨ 따옴표 오류 수정 완료 */}
                             <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span>
-                            <span className="font-mono text-[9px] md:text-[11px] text-gray-300 tracking-[0.2em] uppercase">
-                                Music Production for Virtual Artists
-                            </span>
+                            <span className="font-mono text-[9px] md:text-[11px] text-gray-300 tracking-[0.2em] uppercase">Music Production for Virtual Artists</span>
                         </div>
                     </div>
                 </Reveal>
             </div>
 
             <div className="absolute bottom-28 md:bottom-32 left-1/2 -translate-x-1/2 w-full text-center pointer-events-none px-6 z-40">
-                <p 
-                    className={`text-[3.2vw] md:text-base lg:text-lg text-gray-200 font-medium tracking-widest transition-opacity duration-[800ms] ease-in-out drop-shadow-md whitespace-nowrap ${fade ? 'opacity-100' : 'opacity-0'}`}
-                >
+                <p className={`text-[3.2vw] md:text-base lg:text-lg text-gray-200 font-medium tracking-widest transition-opacity duration-[800ms] ease-in-out drop-shadow-md whitespace-nowrap ${fade ? 'opacity-100' : 'opacity-0'}`}>
                     <span className="text-green-500 mr-2 md:mr-3 font-mono text-[10px] md:text-sm animate-pulse">▶</span>
                     {loadingTips[tipIndex]}
                 </p>

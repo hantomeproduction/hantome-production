@@ -1,6 +1,6 @@
 import React from 'react';
 import { Reveal } from './Reveal';
-import { ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight, ArrowUp } from 'lucide-react';
 
 // 아이콘 컴포넌트들
 const DiscordIcon = ({ className }: { className?: string }) => (
@@ -16,18 +16,6 @@ const XIcon = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 24 24" fill="currentColor" className={className} xmlns="http://www.w3.org/2000/svg"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg>
 );
 
-const Logo = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 160 40" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
-    <path d="M115 2 H10 L2 10 V30 L10 38 H25" stroke="currentColor" strokeWidth="2" strokeLinecap="square"/>
-    <path d="M45 38 H150 L158 30 V10 L150 2 H135" stroke="currentColor" strokeWidth="2" strokeLinecap="square" />
-    <rect x="123" y="0" width="3" height="3" fill="currentColor" />
-    <rect x="33" y="37" width="3" height="3" fill="currentColor" />
-    <text x="80" y="27" fontSize="20" fontWeight="700" fontFamily="Inter, system-ui, sans-serif" textAnchor="middle" fill="currentColor" letterSpacing="1.5">
-      HANTŌME
-    </text>
-  </svg>
-);
-
 export const Contact: React.FC = () => {
   const socialLinks = [
     { label: 'Youtube', icon: YoutubeIcon, url: 'https://www.youtube.com/@hantomeproduction' },
@@ -35,17 +23,21 @@ export const Contact: React.FC = () => {
     { label: 'Twitter(X)', icon: XIcon, url: 'https://x.com/Hantome_Product' }
   ];
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <section id="contact" className="relative w-full h-[100dvh] snap-start snap-always shrink-0 flex flex-col bg-[#050505] overflow-hidden">
         
-        {/* ✨ 004 헤더 상단 고정 */}
+        {/* 상단 004 헤더 */}
         <div className="flex justify-between items-center px-6 py-3 border-b border-white/5 sticky top-0 z-30 bg-[#050505]/90 backdrop-blur-xl shrink-0">
              <span className="font-mono text-[10px] text-gray-400 tracking-widest border border-white/10 px-2 py-1 rounded-full">/004</span>
              <span className="font-mono text-[10px] text-gray-400 tracking-widest uppercase">CONTACT</span>
         </div>
 
-        {/* 메인 컨텐츠 영역: 모바일 여백 최적화 */}
-        <div className="flex-1 flex flex-col justify-center px-6 max-w-[1920px] mx-auto w-full min-h-0 py-4 md:py-10">
+        {/* 메인 연락처 영역 */}
+        <div className="flex-1 flex flex-col justify-center px-6 max-w-[1920px] mx-auto w-full min-h-0 py-2 md:py-10">
             <Reveal>
                 <div className="flex items-center gap-4 mb-2 md:mb-4">
                     <span className="w-8 md:w-12 h-px bg-green-500"></span>
@@ -56,7 +48,7 @@ export const Contact: React.FC = () => {
                 </h2>
             </Reveal>
             
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 border-t border-white/5 pt-6 md:pt-10">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-8 border-t border-white/5 pt-6 md:pt-10">
                 <div className="lg:col-span-7 flex flex-col">
                      <Reveal delay={100}>
                         <div className="mb-6 md:mb-8">
@@ -73,7 +65,7 @@ export const Contact: React.FC = () => {
                      </Reveal>
                 </div>
 
-                <div className="lg:col-span-5 flex lg:justify-end items-start mt-4 lg:mt-0">
+                <div className="lg:col-span-5 flex lg:justify-end items-start mt-2 lg:mt-0">
                     <Reveal delay={200} className="w-full" width="100%">
                         <div className="grid grid-cols-3 gap-2 w-full lg:w-[400px] xl:w-[480px] lg:ml-auto">
                             {socialLinks.map((sns, i) => (
@@ -93,20 +85,45 @@ export const Contact: React.FC = () => {
             </div>
         </div>
         
-        {/* ✨ 축소된 푸터 레이아웃: 모바일 찌그러짐 방지 */}
-        <footer className="py-4 md:py-6 border-t border-white/5 shrink-0 bg-black/50 backdrop-blur-sm">
-            <div className="max-w-[1920px] mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-3 md:gap-0">
-                <div className="flex flex-col items-center md:items-start">
-                    <Logo className="h-3 md:h-4 text-white opacity-40 mb-1" />
-                    <p className="text-[7px] md:text-[9px] font-mono text-gray-600 tracking-widest uppercase">
-                        © 2026 HANTŌME PRODUCTION. ALL RIGHTS RESERVED.
-                    </p>
+        {/* ✨ 푸터 섹션: 모바일에서는 슬림하게, PC에서는 스크롤 캡처와 동일한 웅장한 디자인 */}
+        <footer className="py-4 md:py-16 border-t border-white/5 shrink-0 bg-[#050505] relative">
+            <div className="max-w-[1920px] mx-auto px-6 flex flex-col md:flex-row justify-between items-center md:items-end gap-4 md:gap-0">
+                
+                {/* [PC/모바일] Left: Logo & Descriptions */}
+                <div className="flex flex-col items-center md:items-start text-center md:text-left gap-0.5 md:gap-1">
+                    <div className="flex items-baseline gap-2 md:block">
+                        <h2 className="text-base md:text-4xl font-bold tracking-tighter text-white leading-none uppercase">HANTŌME</h2>
+                        <p className="text-[7px] md:text-xs font-mono text-gray-600 md:text-gray-500 tracking-[0.2em] md:tracking-[0.4em] uppercase md:mt-2">PRODUCTION</p>
+                    </div>
+                    {/* ✨ PC 전용 설명 문구 (스크린샷 일치) */}
+                    <div className="hidden md:flex flex-col gap-1 mt-6 text-xs text-gray-500 font-light tracking-wide">
+                        <p>We define the undefined.</p>
+                        <p>Virtual Artist Management & Creative Production.</p>
+                    </div>
                 </div>
-                <div className="flex items-center gap-4">
-                    <p className="text-[7px] md:text-[9px] font-mono text-gray-500 tracking-widest">SEOUL, KOREA</p>
-                    <span className="w-1 h-1 bg-green-500 rounded-full"></span>
-                    <p className="text-[7px] md:text-[9px] font-mono text-gray-500 tracking-widest uppercase">Status: Active</p>
+
+                {/* ✨ PC 전용: 중앙 상단 이동 버튼 */}
+                <div className="hidden md:block absolute left-1/2 -translate-x-1/2 bottom-12">
+                    <button 
+                        onClick={scrollToTop}
+                        className="w-14 h-14 rounded-full border border-white/10 flex items-center justify-center text-white hover:bg-white hover:text-black transition-all duration-500 group"
+                    >
+                        <ArrowUp className="w-6 h-6 transition-transform group-hover:-translate-y-1" />
+                    </button>
                 </div>
+
+                {/* [PC/모바일] Right: Links & Copyright */}
+                <div className="flex flex-col items-center md:items-end text-center md:text-right gap-2 md:gap-4">
+                    <div className="flex gap-4 md:gap-8 text-[8px] md:text-xs font-mono text-gray-600 md:text-gray-400 uppercase tracking-widest">
+                        <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
+                        <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
+                    </div>
+                    <div className="flex flex-col items-center md:items-end text-[7px] md:text-xs font-mono text-gray-700 md:text-gray-500 tracking-widest uppercase md:gap-1">
+                        <p>© 2026 HANTŌME PRODUCTION.</p>
+                        <p className="hidden md:block">ALL RIGHTS RESERVED.</p>
+                    </div>
+                </div>
+
             </div>
         </footer>
     </section>

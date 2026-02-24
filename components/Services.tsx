@@ -15,21 +15,24 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ index, title, subtitle, desc,
     return (
         <div className="group relative w-full h-full min-h-[350px] md:min-h-0 perspective-[1000px] cursor-pointer" onClick={() => setIsFlipped(!isFlipped)}>
             <div className={`relative w-full h-full transition-all duration-700 preserve-3d ${isFlipped ? 'rotate-y-180' : ''}`}>
-                <div className="absolute inset-0 backface-hidden bg-[#050505] border border-white/10 p-5 md:p-6 flex flex-col justify-between group-hover:border-white/20 transition-colors duration-500">
+                
+                {/* ✨ 테두리 시인성 강화 (border-white/10 -> border-white/30) */}
+                <div className="absolute inset-0 backface-hidden bg-[#050505] border border-white/30 p-5 md:p-6 flex flex-col justify-between group-hover:border-green-500/50 transition-colors duration-500">
                     <div className="flex justify-between items-start shrink-0">
                         <span className="font-mono text-[9px] md:text-[10px] text-gray-500 tracking-widest">SVC_0{index + 1}</span>
-                        <div className="w-1.5 h-1.5 rounded-full bg-white/10 group-hover:bg-green-500 transition-colors duration-500"></div>
+                        <div className="w-1.5 h-1.5 rounded-full bg-white/20 group-hover:bg-green-500 transition-colors duration-500"></div>
                     </div>
                     <div className="flex flex-col justify-center flex-1 my-2">
                         <h3 className="text-2xl md:text-5xl font-light text-white mb-2 leading-tight tracking-tight group-hover:text-green-500 transition-colors">{title}</h3>
                         <p className="font-mono text-[10px] md:text-xs text-gray-500 uppercase tracking-[0.2em]">{subtitle}</p>
                     </div>
-                    <div className="pt-3 border-t border-white/10 mt-auto shrink-0">
-                        <p className="text-xs md:text-sm text-gray-500 font-light leading-relaxed line-clamp-2">{desc}</p>
+                    <div className="pt-3 border-t border-white/20 mt-auto shrink-0">
+                        <p className="text-xs md:text-sm text-gray-400 font-light leading-relaxed line-clamp-2">{desc}</p>
                     </div>
                 </div>
 
-                <div className="absolute inset-0 backface-hidden rotate-y-180 bg-[#050505] border border-green-500/30 p-5 md:p-6 flex flex-col cursor-pointer" onClick={handleClose}>
+                {/* ✨ 뒷면 테두리도 함께 강화 (border-green-500/50) */}
+                <div className="absolute inset-0 backface-hidden rotate-y-180 bg-[#050505] border border-green-500/50 p-5 md:p-6 flex flex-col cursor-pointer" onClick={handleClose}>
                     <div className="flex justify-between items-start mb-4 shrink-0">
                          <span className="font-mono text-[10px] text-green-500 tracking-widest">PRICING_0{index + 1}</span>
                          <span className="text-[10px] font-mono text-gray-500">[ CLOSE ]</span>
@@ -90,7 +93,6 @@ export const Services: React.FC = () => {
              <span className="font-mono text-[10px] text-gray-400 tracking-widest">SERVICE / PRICE</span>
         </div>
         
-        {/* ✨ 모바일에서는 flex-col로 수직 배치하고 스크롤 허용 */}
         <div className="flex-1 flex flex-col max-w-[1920px] mx-auto w-full px-6 pt-8 pb-4 overflow-y-auto md:overflow-hidden no-scrollbar">
             <Reveal>
                 <div className="border-b border-white/5 pb-4 shrink-0">
