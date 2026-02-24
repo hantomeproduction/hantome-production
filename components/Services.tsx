@@ -13,74 +13,44 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ index, title, subtitle, desc,
     const handleClose = (e: React.MouseEvent) => { e.stopPropagation(); setIsFlipped(false); setTimeout(() => setOpenIdx(null), 500); };
 
     return (
-        <div className="group relative w-full h-full perspective-[1000px] cursor-pointer" onClick={() => setIsFlipped(!isFlipped)}>
+        <div className="group relative w-full h-full min-h-[350px] md:min-h-0 perspective-[1000px] cursor-pointer" onClick={() => setIsFlipped(!isFlipped)}>
             <div className={`relative w-full h-full transition-all duration-700 preserve-3d ${isFlipped ? 'rotate-y-180' : ''}`}>
-                
-                {/* FRONT SIDE */}
                 <div className="absolute inset-0 backface-hidden bg-[#050505] border border-white/10 p-5 md:p-6 flex flex-col justify-between group-hover:border-white/20 transition-colors duration-500">
                     <div className="flex justify-between items-start shrink-0">
                         <span className="font-mono text-[9px] md:text-[10px] text-gray-500 tracking-widest">SVC_0{index + 1}</span>
-                        <div className="flex items-center gap-3">
-                             <button className="opacity-0 group-hover:opacity-100 transition-all duration-500 px-3 py-1 rounded-full border border-white/20 hover:border-green-500 hover:text-green-500 text-[9px] font-mono uppercase tracking-widest text-gray-400 bg-white/5 backdrop-blur-sm transform translate-y-2 group-hover:translate-y-0">Check Price</button>
-                            <div className="w-1.5 h-1.5 rounded-full bg-white/10 group-hover:bg-green-500 transition-colors duration-500 shadow-[0_0_0_0_rgba(34,197,94,0)] group-hover:shadow-[0_0_10px_1px_rgba(34,197,94,0.5)]"></div>
-                        </div>
+                        <div className="w-1.5 h-1.5 rounded-full bg-white/10 group-hover:bg-green-500 transition-colors duration-500"></div>
                     </div>
                     <div className="flex flex-col justify-center flex-1 my-2">
-                        <h3 className="text-2xl md:text-4xl lg:text-5xl font-light text-white mb-2 md:mb-4 leading-tight tracking-tight group-hover:text-green-500 transition-colors duration-500 break-words">
-                            {title}
-                        </h3>
-                        <p className="font-mono text-[10px] md:text-xs text-gray-500 uppercase tracking-[0.2em] group-hover:text-gray-400 transition-colors duration-500">
-                            {subtitle}
-                        </p>
+                        <h3 className="text-2xl md:text-5xl font-light text-white mb-2 leading-tight tracking-tight group-hover:text-green-500 transition-colors">{title}</h3>
+                        <p className="font-mono text-[10px] md:text-xs text-gray-500 uppercase tracking-[0.2em]">{subtitle}</p>
                     </div>
-                    <div className="pt-3 border-t border-white/10 group-hover:border-white/20 transition-colors duration-500 mt-auto shrink-0">
-                        <p className="text-xs md:text-sm text-gray-500 font-light leading-relaxed break-keep group-hover:text-gray-400 transition-colors duration-500 line-clamp-2 md:line-clamp-3">
-                            {desc}
-                        </p>
+                    <div className="pt-3 border-t border-white/10 mt-auto shrink-0">
+                        <p className="text-xs md:text-sm text-gray-500 font-light leading-relaxed line-clamp-2">{desc}</p>
                     </div>
                 </div>
 
-                {/* BACK SIDE */}
-                <div 
-                    className="absolute inset-0 backface-hidden rotate-y-180 bg-[#050505] border border-green-500/30 p-5 md:p-6 flex flex-col cursor-pointer" 
-                    onClick={handleClose}
-                >
-                    <div className="flex justify-between items-start mb-4 md:mb-6 shrink-0">
-                         <span className="font-mono text-[10px] md:text-xs text-green-500 tracking-widest">PRICING_0{index + 1}</span>
-                         <button onClick={handleClose} className="text-[10px] md:text-[11px] font-mono text-gray-400 hover:text-white uppercase tracking-widest cursor-pointer border border-white/10 px-2 py-1 rounded hover:bg-white/10 transition-colors">
-                            [ CLOSE ]
-                        </button>
+                <div className="absolute inset-0 backface-hidden rotate-y-180 bg-[#050505] border border-green-500/30 p-5 md:p-6 flex flex-col cursor-pointer" onClick={handleClose}>
+                    <div className="flex justify-between items-start mb-4 shrink-0">
+                         <span className="font-mono text-[10px] text-green-500 tracking-widest">PRICING_0{index + 1}</span>
+                         <span className="text-[10px] font-mono text-gray-500">[ CLOSE ]</span>
                     </div>
-                    
-                    <div className="flex-1 overflow-y-auto no-scrollbar py-2 pr-2">
-                        <h4 className="text-xl md:text-2xl lg:text-3xl text-white font-light mb-6 md:mb-8">{title}</h4>
-                        
-                        <ul className="space-y-2 md:space-y-3">
+                    <div className="flex-1 overflow-y-auto no-scrollbar py-2">
+                        <h4 className="text-xl text-white font-light mb-6">{title}</h4>
+                        <ul className="space-y-2">
                             {pricing.map((item, idx) => (
                                 <li key={idx} className="flex flex-col" onClick={(e) => e.stopPropagation()}>
-                                    <div 
-                                        className="flex justify-between items-center cursor-pointer group/row py-3 md:py-4 border-b border-transparent hover:border-white/5 transition-colors" 
-                                        onClick={() => setOpenIdx(openIdx === idx ? null : idx)}
-                                    >
-                                        <span className="text-xs md:text-sm text-gray-400 uppercase tracking-wider group-hover/row:text-gray-200 transition-colors">{item.label}</span>
-                                        <span className="font-mono text-xs md:text-sm text-green-500 group-hover/row:text-white group-hover/row:scale-105 transition-all duration-300 origin-right" title="클릭해서 설명 보기">{item.price}</span>
+                                    <div className="flex justify-between items-center cursor-pointer py-3 border-b border-transparent hover:border-white/5" onClick={() => setOpenIdx(openIdx === idx ? null : idx)}>
+                                        <span className="text-xs text-gray-400 uppercase">{item.label}</span>
+                                        <span className="font-mono text-xs text-green-500">{item.price}</span>
                                     </div>
-                                    <div className={`w-full overflow-hidden transition-all duration-500 ease-in-out ${openIdx === idx ? 'max-h-[200px] opacity-100 mb-3' : 'max-h-0 opacity-0'}`}>
-                                        <div className="p-3 bg-white/5 border border-white/10 rounded-lg text-[11px] md:text-xs text-gray-200 leading-relaxed break-keep shadow-inner whitespace-pre-line">
-                                            {item.desc || '상세 설명이 등록되지 않았습니다.'}
-                                        </div>
+                                    <div className={`w-full overflow-hidden transition-all duration-500 ${openIdx === idx ? 'max-h-[200px] opacity-100 mb-3' : 'max-h-0 opacity-0'}`}>
+                                        <div className="p-3 bg-white/5 border border-white/10 rounded-lg text-[11px] text-gray-200 leading-relaxed whitespace-pre-line">{item.desc || '상세 설명이 등록되지 않았습니다.'}</div>
                                     </div>
-                                    <div className="w-full h-px bg-white/5 transition-colors mt-1"></div>
                                 </li>
                             ))}
                         </ul>
                     </div>
-                    
-                    <div className="mt-auto pt-4 text-center shrink-0">
-                         <p className="text-[9px] md:text-[10px] font-mono text-gray-600 uppercase tracking-widest">* KRW (VAT Included)</p>
-                    </div>
                 </div>
-                
             </div>
         </div>
     );
@@ -88,7 +58,6 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ index, title, subtitle, desc,
 
 export const Services: React.FC = () => {
   const [prices, setPrices] = useState<any>({});
-  
   useEffect(() => {
     const fetchPrices = async () => {
         const docSnap = await getDoc(doc(db, "services", "pricing"));
@@ -100,18 +69,9 @@ export const Services: React.FC = () => {
   const formatDesc = (desc: string, fallback: string) => {
       let result = desc || fallback;
       if (!result) return '';
-      result = result.replace(
-          "작곡, 작사, 악기녹음, 믹스&마스터링 등 오리지널송 모든 제작 과정이 포함 된 패키지입니다. 작업 방식과 과정에 따라 가격이 달라져서 세세한 상담 후에 진행 도와드립니다. 자세한 내용은 문의 부탁드립니다.",
-          "작곡, 작사, 악기녹음, 믹스&마스터링 등 오리지널송 모든 제작 과정이 포함 된 패키지입니다.\n작업 방식과 과정에 따라 가격이 달라져서 세세한 상담 후에 진행 도와드립니다.\n자세한 내용은 문의 부탁드립니다."
-      );
-      result = result.replace(
-          "오리지널송 스케치가 있으시다면, 스케치를 바탕으로 완성도 있는 미디 편곡을 진행합니다.",
-          "오리지널송 스케치가 있으시다면,\n스케치를 바탕으로 완성도 있는 미디 편곡을 진행합니다."
-      );
-      result = result.replace(
-          "커버곡을 위한 맞춤형 인스트루멘탈 제작. 모든 악기 작업이 미디(가상악기)로 진행됩니다.",
-          "커버곡을 위한 맞춤형 인스트루멘탈 제작.\n모든 악기 작업이 미디(가상악기)로 진행됩니다."
-      );
+      result = result.replace("작곡, 작사, 악기녹음, 믹스&마스터링 등 오리지널송 모든 제작 과정이 포함 된 패키지입니다. 작업 방식과 과정에 따라 가격이 달라져서 세세한 상담 후에 진행 도와드립니다. 자세한 내용은 문의 부탁드립니다.", "작곡, 작사, 악기녹음, 믹스&마스터링 등 오리지널송 모든 제작 과정이 포함 된 패키지입니다.\n작업 방식과 과정에 따라 가격이 달라져서 세세한 상담 후에 진행 도와드립니다.\n자세한 내용은 문의 부탁드립니다.");
+      result = result.replace("오리지널송 스케치가 있으시다면, 스케치를 바탕으로 완성도 있는 미디 편곡을 진행합니다.", "오리지널송 스케치가 있으시다면,\n스케치를 바탕으로 완성도 있는 미디 편곡을 진행합니다.");
+      result = result.replace("커버곡을 위한 맞춤형 인스트루멘탈 제작. 모든 악기 작업이 미디(가상악기)로 진행됩니다.", "커버곡을 위한 맞춤형 인스트루멘탈 제작.\n모든 악기 작업이 미디(가상악기)로 진행됩니다.");
       return result;
   };
 
@@ -125,34 +85,28 @@ export const Services: React.FC = () => {
   return (
     <section id="service" className="relative w-full h-[100dvh] snap-start snap-always shrink-0 flex flex-col border-b border-white/5 bg-[#050505] overflow-hidden">
         <style>{`.preserve-3d { transform-style: preserve-3d; } .backface-hidden { backface-visibility: hidden; } .rotate-y-180 { transform: rotateY(180deg); }`}</style>
-        
         <div className="flex justify-between items-center px-6 py-3 border-b border-white/5 sticky top-0 z-30 bg-[#050505]/90 backdrop-blur-xl shrink-0">
              <span className="font-mono text-[10px] text-gray-400 tracking-widest border border-white/10 px-2 py-1 rounded-full">/003</span>
              <span className="font-mono text-[10px] text-gray-400 tracking-widest">SERVICE / PRICE</span>
         </div>
         
-        <div className="flex-1 flex flex-col max-w-[1920px] mx-auto w-full px-6 pt-8 pb-4 min-h-0">
+        {/* ✨ 모바일에서는 flex-col로 수직 배치하고 스크롤 허용 */}
+        <div className="flex-1 flex flex-col max-w-[1920px] mx-auto w-full px-6 pt-8 pb-4 overflow-y-auto md:overflow-hidden no-scrollbar">
             <Reveal>
-                {/* ✨ 타이틀을 혼자 단독으로 웅장하게 배치 */}
                 <div className="border-b border-white/5 pb-4 shrink-0">
-                    <h2 className="text-[8vw] md:text-[5vw] lg:text-[4.5vw] leading-[0.8] font-bold tracking-tighter text-white uppercase opacity-90">
-                        SERVICE / PRICE
-                    </h2>
+                    <h2 className="text-[8vw] md:text-[4.5vw] font-bold text-white uppercase opacity-90">SERVICE / PRICE</h2>
                 </div>
             </Reveal>
 
             <Reveal delay={100}>
-                {/* ✨ 타이틀 밑선 바로 아래 공간에, 카드를 안내하는 느낌으로 우측에 딱 붙여버림! (크기도 증가) */}
-                <div className="flex justify-end w-full pt-3 mb-3 md:mb-4 shrink-0">
-                    <span className="text-xs md:text-sm lg:text-base font-medium text-green-500 animate-pulse tracking-wide">
-                        * 카드를 클릭하면 상세 가격이 표시됩니다.
-                    </span>
+                <div className="flex justify-end w-full pt-3 mb-3 shrink-0">
+                    <span className="text-[10px] md:text-base font-medium text-green-500 animate-pulse">* 카드를 클릭하면 상세 가격이 표시됩니다.</span>
                 </div>
             </Reveal>
             
-            <div className="flex-1 min-h-0 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 w-full">
+            <div className="flex flex-col md:grid md:grid-cols-2 xl:grid-cols-4 gap-4 w-full pb-10 md:pb-0 md:flex-1 md:min-h-0">
                 {services.map((svc, i) => (
-                    <Reveal key={i} delay={i * 100} className="w-full h-full" width="100%"><ServiceCard {...svc} index={i} /></Reveal>
+                    <Reveal key={i} delay={i * 100} className="w-full md:h-full" width="100%"><ServiceCard {...svc} index={i} /></Reveal>
                 ))}
             </div>
         </div>

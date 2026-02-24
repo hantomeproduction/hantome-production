@@ -5,9 +5,7 @@ import { Reveal } from './Reveal';
 export const Hero: React.FC = () => {
   const [currentDate, setCurrentDate] = useState<string>('');
   const [isLoaded, setIsLoaded] = useState(false);
-
   const [tipIndex, setTipIndex] = useState(0);
-  // ✨ 처음엔 투명하게(false) 숨겨둔 상태로 시작!
   const [fade, setFade] = useState(false);
 
   const loadingTips = [
@@ -27,12 +25,8 @@ export const Hero: React.FC = () => {
     updateDate();
     const dateInterval = setInterval(updateDate, 60000);
 
-    // ✨ 1. 페이지 로딩 후 0.8초 뒤에 처음으로 스르륵 나타나게! (다른 메인 텍스트들과 타이밍 맞춤)
-    const initialTimer = setTimeout(() => {
-        setFade(true);
-    }, 800);
+    const initialTimer = setTimeout(() => { setFade(true); }, 800);
 
-    // ✨ 2. 이후 4.5초마다 자연스럽게 교체되는 타이머
     const tipInterval = setInterval(() => {
         setFade(false); 
         setTimeout(() => {
@@ -51,9 +45,7 @@ export const Hero: React.FC = () => {
   const scrollToWork = (e: React.MouseEvent) => {
     e.preventDefault();
     const element = document.getElementById('work');
-    if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-    }
+    if (element) { element.scrollIntoView({ behavior: 'smooth' }); }
   };
 
   return (
@@ -83,13 +75,14 @@ export const Hero: React.FC = () => {
             </div>
             
             <div className="flex-1 flex flex-col items-center justify-center mix-blend-difference pb-20">
-                <Reveal><h1 className="text-[13vw] leading-[0.85] font-bold tracking-tighter text-white whitespace-nowrap select-none text-center">HANTŌME</h1></Reveal>
+                <Reveal><h1 className="text-[16vw] md:text-[13vw] leading-[0.85] font-bold tracking-tighter text-white whitespace-nowrap select-none text-center">HANTŌME</h1></Reveal>
                 
                 <Reveal delay={200}>
-                    <div className="flex items-center justify-center gap-6 mt-6 md:mt-8 opacity-80">
+                    <div className="flex items-center justify-center gap-6 mt-6 md:mt-8 opacity-90">
                         <span className="hidden md:block h-px w-16 md:w-24 bg-gradient-to-r from-transparent via-white/50 to-transparent"></span>
-                        <p className="text-xl md:text-3xl font-light text-gray-300 tracking-tight text-center">
-                            Define the <span className="font-serif italic text-white">Undefined</span>
+                        {/* ✨ 슬로건 폰트: font-bold tracking-tighter (HANTŌME와 통일) */}
+                        <p className="text-xl md:text-3xl font-bold tracking-tighter text-white uppercase text-center">
+                            Define the Undefined
                         </p>
                         <span className="hidden md:block h-px w-16 md:w-24 bg-gradient-to-r from-transparent via-white/50 to-transparent"></span>
                     </div>
@@ -108,11 +101,10 @@ export const Hero: React.FC = () => {
             </div>
 
             <div className="absolute bottom-28 md:bottom-32 left-1/2 -translate-x-1/2 w-full text-center pointer-events-none px-6 z-40">
-                {/* ✨ transition 애니메이션이 걸려 있어서 처음에 딱! 안 나오고 스르륵 페이드인 될 거야 */}
                 <p 
-                    className={`text-sm md:text-base lg:text-lg text-gray-200 font-medium tracking-widest transition-opacity duration-[800ms] ease-in-out drop-shadow-md ${fade ? 'opacity-100' : 'opacity-0'}`}
+                    className={`text-[3.2vw] md:text-base lg:text-lg text-gray-200 font-medium tracking-widest transition-opacity duration-[800ms] ease-in-out drop-shadow-md whitespace-nowrap ${fade ? 'opacity-100' : 'opacity-0'}`}
                 >
-                    <span className="text-green-500 mr-2 md:mr-3 font-mono text-xs md:text-sm animate-pulse">▶</span>
+                    <span className="text-green-500 mr-2 md:mr-3 font-mono text-[10px] md:text-sm animate-pulse">▶</span>
                     {loadingTips[tipIndex]}
                 </p>
             </div>
