@@ -2,7 +2,6 @@ import React from 'react';
 import { Reveal } from './Reveal';
 import { ArrowUpRight, ArrowUp } from 'lucide-react';
 
-// 아이콘 컴포넌트들
 const DiscordIcon = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 127.14 96.36" fill="currentColor" className={className} xmlns="http://www.w3.org/2000/svg"><path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.11,77.11,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22c2.36-24.44-5-47.25-18.9-72.15ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/></svg>
 );
@@ -24,24 +23,23 @@ export const Contact: React.FC = () => {
   ];
 
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // ✨ 창 좌표 기준이 아니라, 맨 위 컴포넌트(hero)를 직접 찾아서 이동하게 변경
+    document.getElementById('hero')?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
     <section id="contact" className="relative w-full h-[100dvh] snap-start snap-always shrink-0 flex flex-col bg-[#050505] overflow-hidden">
         
-        {/* 상단 004 헤더 */}
         <div className="flex justify-between items-center px-6 py-3 border-b border-white/5 sticky top-0 z-30 bg-[#050505]/90 backdrop-blur-xl shrink-0">
              <span className="font-mono text-[10px] text-gray-400 tracking-widest border border-white/10 px-2 py-1 rounded-full">/004</span>
              <span className="font-mono text-[10px] text-gray-400 tracking-widest uppercase">CONTACT</span>
         </div>
 
-        {/* 메인 연락처 영역 */}
         <div className="flex-1 flex flex-col justify-center px-6 max-w-[1920px] mx-auto w-full min-h-0 py-2 md:py-10">
             <Reveal>
                 <div className="flex items-center gap-4 mb-2 md:mb-4">
-                    <span className="w-8 md:w-12 h-px bg-green-500"></span>
-                    <p className="font-mono text-[10px] md:text-sm text-green-500 tracking-[0.2em] uppercase">Ready to start?</p>
+                    <span className="w-8 md:w-12 h-px bg-main-purple"></span>
+                    <p className="font-mono text-[10px] md:text-sm text-main-purple tracking-[0.2em] uppercase">Ready to start?</p>
                 </div>
                 <h2 className="text-[12vw] md:text-[8vw] leading-[0.8] font-bold tracking-tighter mb-6 md:mb-12 uppercase text-white select-none">
                     CONTACT
@@ -53,12 +51,12 @@ export const Contact: React.FC = () => {
                      <Reveal delay={100}>
                         <div className="mb-6 md:mb-8">
                             <p className="font-mono text-[8px] md:text-[9px] text-gray-500 mb-2 md:mb-4 tracking-widest uppercase">[ INQUIRIES ]</p>
-                            <a href="mailto:hantomeproduction@gmail.com" className="text-lg md:text-3xl lg:text-4xl hover:text-gray-400 transition-colors block font-light tracking-tight underline-offset-8 decoration-white/20">
+                            <a href="mailto:hantomeproduction@gmail.com" className="text-lg md:text-3xl lg:text-4xl hover:text-main-purple transition-colors block font-light tracking-tight underline-offset-8 decoration-white/20">
                                 hantomeproduction@gmail.com
                             </a>
                         </div>
                         <div className="flex flex-col gap-6 items-start">
-                            <a href="https://discord.gg/hnG4KkmY" target="_blank" rel="noopener noreferrer" className="group w-fit inline-flex items-center gap-4 px-6 md:px-8 py-4 md:py-5 border border-white/20 bg-white/5 text-white font-bold tracking-widest text-[10px] md:text-xs hover:bg-white hover:text-black transition-all duration-300 uppercase relative overflow-hidden">
+                            <a href="https://discord.gg/hnG4KkmY" target="_blank" rel="noopener noreferrer" className="group w-fit inline-flex items-center gap-4 px-6 md:px-8 py-4 md:py-5 border border-white/20 bg-white/5 text-white font-bold tracking-widest text-[10px] md:text-xs hover:bg-main-purple hover:text-black hover:border-main-purple transition-all duration-300 uppercase relative overflow-hidden">
                                 <span className="relative z-10 flex items-center gap-3"><DiscordIcon className="w-4 md:w-5 h-auto" />JOIN DISCORD</span>
                             </a>
                         </div>
@@ -69,7 +67,7 @@ export const Contact: React.FC = () => {
                     <Reveal delay={200} className="w-full" width="100%">
                         <div className="grid grid-cols-3 gap-2 w-full lg:w-[400px] xl:w-[480px] lg:ml-auto">
                             {socialLinks.map((sns, i) => (
-                                <a key={i} href={sns.url} target="_blank" rel="noopener noreferrer" className="block w-full aspect-square border border-white/10 relative hover:bg-[#fff] transition-all duration-500 group overflow-hidden bg-black/20">
+                                <a key={i} href={sns.url} target="_blank" rel="noopener noreferrer" className="block w-full aspect-square border border-white/10 relative hover:bg-main-purple transition-all duration-500 group overflow-hidden bg-black/20">
                                     <div className="absolute top-2 left-2 right-2 flex justify-between items-start z-20">
                                         <span className="font-mono text-[8px] uppercase tracking-[0.1em] text-gray-500 group-hover:text-black">{sns.label}</span>
                                         <ArrowUpRight className="w-3 h-3 text-gray-500 group-hover:text-black" />
@@ -85,38 +83,32 @@ export const Contact: React.FC = () => {
             </div>
         </div>
         
-        {/* ✨ 푸터 섹션: 모바일에서는 슬림하게, PC에서는 스크롤 캡처와 동일한 웅장한 디자인 */}
         <footer className="py-4 md:py-16 border-t border-white/5 shrink-0 bg-[#050505] relative">
             <div className="max-w-[1920px] mx-auto px-6 flex flex-col md:flex-row justify-between items-center md:items-end gap-4 md:gap-0">
                 
-                {/* [PC/모바일] Left: Logo & Descriptions */}
                 <div className="flex flex-col items-center md:items-start text-center md:text-left gap-0.5 md:gap-1">
                     <div className="flex items-baseline gap-2 md:block">
-                        <h2 className="text-base md:text-4xl font-bold tracking-tighter text-white leading-none uppercase">HANTŌME</h2>
-                        <p className="text-[7px] md:text-xs font-mono text-gray-600 md:text-gray-500 tracking-[0.2em] md:tracking-[0.4em] uppercase md:mt-2">PRODUCTION</p>
+                        <img src="/logo.png" alt="HANTŌME" className="h-6 md:h-10 object-contain" />
                     </div>
-                    {/* ✨ PC 전용 설명 문구 (스크린샷 일치) */}
                     <div className="hidden md:flex flex-col gap-1 mt-6 text-xs text-gray-500 font-light tracking-wide">
                         <p>We define the undefined.</p>
                         <p>Virtual Artist Management & Creative Production.</p>
                     </div>
                 </div>
 
-                {/* ✨ PC 전용: 중앙 상단 이동 버튼 */}
                 <div className="hidden md:block absolute left-1/2 -translate-x-1/2 bottom-12">
                     <button 
                         onClick={scrollToTop}
-                        className="w-14 h-14 rounded-full border border-white/10 flex items-center justify-center text-white hover:bg-white hover:text-black transition-all duration-500 group"
+                        className="w-14 h-14 rounded-full border border-white/10 flex items-center justify-center text-white hover:bg-main-purple hover:text-black hover:border-main-purple transition-all duration-500 group"
                     >
                         <ArrowUp className="w-6 h-6 transition-transform group-hover:-translate-y-1" />
                     </button>
                 </div>
 
-                {/* [PC/모바일] Right: Links & Copyright */}
                 <div className="flex flex-col items-center md:items-end text-center md:text-right gap-2 md:gap-4">
                     <div className="flex gap-4 md:gap-8 text-[8px] md:text-xs font-mono text-gray-600 md:text-gray-400 uppercase tracking-widest">
-                        <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
-                        <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
+                        <a href="#" className="hover:text-main-purple transition-colors">Terms of Service</a>
+                        <a href="#" className="hover:text-main-purple transition-colors">Privacy Policy</a>
                     </div>
                     <div className="flex flex-col items-center md:items-end text-[7px] md:text-xs font-mono text-gray-700 md:text-gray-500 tracking-widest uppercase md:gap-1">
                         <p>© 2026 HANTŌME PRODUCTION.</p>

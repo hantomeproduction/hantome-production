@@ -19,16 +19,14 @@ export const ScrollToTop: React.FC = () => {
   }, []);
 
   const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
+    // ✨ 창 좌표 기준이 아니라, 맨 위 컴포넌트(hero)를 직접 찾아서 이동하게 변경
+    document.getElementById('hero')?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
     <button
       onClick={scrollToTop}
-      className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-40 p-4 rounded-full bg-black/50 border border-white/10 backdrop-blur-md text-white hover:bg-white hover:text-black transition-all duration-500 group ${
+      className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-40 p-4 rounded-full bg-black/50 border border-white/10 backdrop-blur-md text-white hover:bg-main-purple hover:text-black hover:border-main-purple transition-all duration-500 group ${
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'
       }`}
       aria-label="Scroll to top"

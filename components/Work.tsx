@@ -8,7 +8,6 @@ interface ProjectProps { id: string; title: string; customThumbnail?: string; }
 
 const ProjectCard: React.FC<ProjectProps> = ({ id, title, customThumbnail }) => {
   return (
-    // ✨ 모바일 너비 조정: w-[180px]
     <div onClick={() => window.open(`https://www.youtube.com/watch?v=${id}`, '_blank')} className="group/card cursor-pointer flex flex-col gap-2 w-[180px] md:w-[280px] shrink-0 snap-start relative">
         <div className="relative aspect-video w-full overflow-hidden bg-[#111] border border-white/10 group-hover/card:border-white/30 transition-all duration-500">
              <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-white/50 z-20 transition-all duration-300 group-hover/card:w-4 group-hover/card:h-4"></div>
@@ -27,7 +26,7 @@ const ProjectCard: React.FC<ProjectProps> = ({ id, title, customThumbnail }) => 
                 <ArrowUpRight className="w-3 h-3 text-gray-600 group-hover/card:text-white transition-colors duration-300 shrink-0" />
             </div>
             <div className="flex items-center mt-1">
-                <span className="text-[7px] md:text-[8px] font-mono text-green-500 uppercase tracking-widest bg-green-500/10 px-1.5 py-0.5 rounded-sm">YOUTUBE</span>
+                <span className="text-[7px] md:text-[8px] font-mono text-main-purple uppercase tracking-widest bg-main-purple/10 px-1.5 py-0.5 rounded-sm">YOUTUBE</span>
             </div>
         </div>
     </div>
@@ -68,7 +67,7 @@ const ProjectRow: React.FC<{ title: string; subtitle: string; projects: any[] }>
         <div className="w-full py-2 md:py-3 relative flex flex-col justify-center">
             <div className="mb-2 md:mb-3 px-6 md:px-0 flex justify-between items-end">
                 <div className="flex flex-col gap-1">
-                    <Reveal><div className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-green-500 rounded-sm"></span><span className="text-[8px] md:text-[9px] font-mono text-green-500 tracking-[0.2em] uppercase">{subtitle}</span></div></Reveal>
+                    <Reveal><div className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-main-purple rounded-sm"></span><span className="text-[8px] md:text-[9px] font-mono text-main-purple tracking-[0.2em] uppercase">{subtitle}</span></div></Reveal>
                     <Reveal delay={100}><h3 className="text-xl md:text-3xl font-medium text-white tracking-tight">{title}</h3></Reveal>
                 </div>
             </div>
@@ -80,7 +79,7 @@ const ProjectRow: React.FC<{ title: string; subtitle: string; projects: any[] }>
                     <div className="w-6 shrink-0 md:hidden"></div>
                 </div>
             </div>
-            <div className="hidden md:block absolute bottom-0 left-0 w-full h-[1px] bg-white/5"><div className="h-[1px] bg-green-500 transition-all duration-300 ease-out" style={{ width: `${Math.max(5, progress)}%` }}></div></div>
+            <div className="hidden md:block absolute bottom-0 left-0 w-full h-[1px] bg-white/5"><div className="h-[1px] bg-main-purple transition-all duration-300 ease-out" style={{ width: `${Math.max(5, progress)}%` }}></div></div>
         </div>
     );
 };

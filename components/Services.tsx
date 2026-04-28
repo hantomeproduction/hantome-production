@@ -16,14 +16,13 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ index, title, subtitle, desc,
         <div className="group relative w-full h-full min-h-[350px] md:min-h-0 perspective-[1000px] cursor-pointer" onClick={() => setIsFlipped(!isFlipped)}>
             <div className={`relative w-full h-full transition-all duration-700 preserve-3d ${isFlipped ? 'rotate-y-180' : ''}`}>
                 
-                {/* ✨ 테두리 시인성 강화 (border-white/10 -> border-white/30) */}
-                <div className="absolute inset-0 backface-hidden bg-[#050505] border border-white/30 p-5 md:p-6 flex flex-col justify-between group-hover:border-green-500/50 transition-colors duration-500">
+                <div className="absolute inset-0 backface-hidden bg-[#050505] border border-white/30 p-5 md:p-6 flex flex-col justify-between group-hover:border-main-purple/50 transition-colors duration-500">
                     <div className="flex justify-between items-start shrink-0">
                         <span className="font-mono text-[9px] md:text-[10px] text-gray-500 tracking-widest">SVC_0{index + 1}</span>
-                        <div className="w-1.5 h-1.5 rounded-full bg-white/20 group-hover:bg-green-500 transition-colors duration-500"></div>
+                        <div className="w-1.5 h-1.5 rounded-full bg-white/20 group-hover:bg-main-purple transition-colors duration-500"></div>
                     </div>
                     <div className="flex flex-col justify-center flex-1 my-2">
-                        <h3 className="text-2xl md:text-5xl font-light text-white mb-2 leading-tight tracking-tight group-hover:text-green-500 transition-colors">{title}</h3>
+                        <h3 className="text-2xl md:text-5xl font-light text-white mb-2 leading-tight tracking-tight group-hover:text-main-purple transition-colors">{title}</h3>
                         <p className="font-mono text-[10px] md:text-xs text-gray-500 uppercase tracking-[0.2em]">{subtitle}</p>
                     </div>
                     <div className="pt-3 border-t border-white/20 mt-auto shrink-0">
@@ -31,10 +30,9 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ index, title, subtitle, desc,
                     </div>
                 </div>
 
-                {/* ✨ 뒷면 테두리도 함께 강화 (border-green-500/50) */}
-                <div className="absolute inset-0 backface-hidden rotate-y-180 bg-[#050505] border border-green-500/50 p-5 md:p-6 flex flex-col cursor-pointer" onClick={handleClose}>
+                <div className="absolute inset-0 backface-hidden rotate-y-180 bg-[#050505] border border-main-purple/50 p-5 md:p-6 flex flex-col cursor-pointer" onClick={handleClose}>
                     <div className="flex justify-between items-start mb-4 shrink-0">
-                         <span className="font-mono text-[10px] text-green-500 tracking-widest">PRICING_0{index + 1}</span>
+                         <span className="font-mono text-[10px] text-main-purple tracking-widest">PRICING_0{index + 1}</span>
                          <span className="text-[10px] font-mono text-gray-500">[ CLOSE ]</span>
                     </div>
                     <div className="flex-1 overflow-y-auto no-scrollbar py-2">
@@ -44,7 +42,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ index, title, subtitle, desc,
                                 <li key={idx} className="flex flex-col" onClick={(e) => e.stopPropagation()}>
                                     <div className="flex justify-between items-center cursor-pointer py-3 border-b border-transparent hover:border-white/5" onClick={() => setOpenIdx(openIdx === idx ? null : idx)}>
                                         <span className="text-xs text-gray-400 uppercase">{item.label}</span>
-                                        <span className="font-mono text-xs text-green-500">{item.price}</span>
+                                        <span className="font-mono text-xs text-main-purple">{item.price}</span>
                                     </div>
                                     <div className={`w-full overflow-hidden transition-all duration-500 ${openIdx === idx ? 'max-h-[200px] opacity-100 mb-3' : 'max-h-0 opacity-0'}`}>
                                         <div className="p-3 bg-white/5 border border-white/10 rounded-lg text-[11px] text-gray-200 leading-relaxed whitespace-pre-line">{item.desc || '상세 설명이 등록되지 않았습니다.'}</div>
@@ -102,7 +100,7 @@ export const Services: React.FC = () => {
 
             <Reveal delay={100}>
                 <div className="flex justify-end w-full pt-3 mb-3 shrink-0">
-                    <span className="text-[10px] md:text-base font-medium text-green-500 animate-pulse">* 카드를 클릭하면 상세 가격이 표시됩니다.</span>
+                    <span className="text-[10px] md:text-base font-medium text-main-purple animate-pulse">* 카드를 클릭하면 상세 가격이 표시됩니다.</span>
                 </div>
             </Reveal>
             

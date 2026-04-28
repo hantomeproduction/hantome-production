@@ -1,114 +1,227 @@
-import React, { useEffect, useState } from 'react';
-import { ArrowDown } from 'lucide-react';
-import { Reveal } from './Reveal';
+import React, { useEffect, useState, useRef } from 'react';
+import { db } from '../firebase';
+import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 
-export const Hero: React.FC = () => {
-  const [currentDate, setCurrentDate] = useState<string>('');
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [tipIndex, setTipIndex] = useState(0);
-  const [fade, setFade] = useState(false);
-
-  const loadingTips = [
-    "한토메 프로덕션은 크리에이터들을 위한 음악 제작팀입니다.",
-    "우리와 함께 당신의 음악을 구현해보세요.",
-    "정의되지 않은 당신만의 세계관을 사운드로 완성합니다.",
-    "버츄얼 아티스트의 고유한 서사를 음악에 담아냅니다.",
-    "시스템 동기화 중... 당신의 고유한 주파수를 맞추는 중입니다."
-  ];
+// 고해상도(Retina) 캔버스 배경 애니메이션
+const CanvasBackground: React.FC = () => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    const updateDate = () => {
-      const now = new Date();
-      const formattedDate = `${now.getDate()}.${String(now.getMonth() + 1).padStart(2, '0')}.${now.getFullYear()}`;
-      setCurrentDate(formattedDate);
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let W: number, H: number;
+    let animationFrameId: number;
+
+    const orbs = [
+      { cx:0.38, cy:0.50, rx:0.20, ry:0.14, period:22, phase:0.00, size:0.52, colors:['#2a1460','#7b4fcf','#c4a8f5'], alpha:0.38 },
+      { cx:0.65, cy:0.48, rx:0.17, ry:0.21, period:18, phase:2.09, size:0.48, colors:['#1a0a50','#5530aa','#9b6fef'], alpha:0.35 },
+      { cx:0.52, cy:0.32, rx:0.26, ry:0.19, period:26, phase:4.19, size:0.44, colors:['#200a40','#9040a0','#d4a8f5'], alpha:0.32 },
+      { cx:0.48, cy:0.70, rx:0.21, ry:0.15, period:30, phase:1.05, size:0.46, colors:['#120830','#4020a0','#7b4fcf'], alpha:0.34 },
+      { cx:0.45, cy:0.44, rx:0.24, ry:0.19, period:12, phase:0.50, size:0.28, colors:['#6030b0','#c4a8f5','#e8d6fd'], alpha:0.45 },
+      { cx:0.58, cy:0.56, rx:0.21, ry:0.23, period:10, phase:3.14, size:0.26, colors:['#4020a0','#9b6fef','#c4a8f5'], alpha:0.42 },
+      { cx:0.35, cy:0.62, rx:0.19, ry:0.21, period:14, phase:1.57, size:0.24, colors:['#801860','#d08ae0','#f0c8f8'], alpha:0.38 },
+      { cx:0.70, cy:0.30, rx:0.15, ry:0.19, period:16, phase:5.24, size:0.22, colors:['#3020a0','#8060d0','#c4a8f5'], alpha:0.40 },
+      { cx:0.50, cy:0.46, rx:0.30, ry:0.23, period:8,  phase:0.80, size:0.09, colors:['#c4a8f5','#e8d6fd','#ffffff'], alpha:0.70 },
+      { cx:0.42, cy:0.52, rx:0.26, ry:0.21, period:7,  phase:2.60, size:0.08, colors:['#e0a0f0','#f4d0fc','#ffffff'], alpha:0.65 },
+      { cx:0.58, cy:0.42, rx:0.22, ry:0.25, period:9,  phase:4.80, size:0.07, colors:['#a080e0','#d0b8f8','#ffffff'], alpha:0.65 },
+    ];
+
+    const hexToRgb = (hex: string) => {
+      const r = parseInt(hex.slice(1,3), 16);
+      const g = parseInt(hex.slice(3,5), 16);
+      const b = parseInt(hex.slice(5,7), 16);
+      return [r, g, b];
     };
-    updateDate();
-    const dateInterval = setInterval(updateDate, 60000);
-    const initialTimer = setTimeout(() => { setFade(true); }, 800);
-    const tipInterval = setInterval(() => {
-        setFade(false); 
-        setTimeout(() => {
-            setTipIndex((prev) => (prev + 1) % loadingTips.length);
-            setFade(true); 
-        }, 800); 
-    }, 4500);
-    return () => { clearInterval(dateInterval); clearTimeout(initialTimer); clearInterval(tipInterval); };
+
+    const drawOrb = (cx: number, cy: number, radius: number, colors: string[], alpha: number) => {
+      const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+      const [r0,g0,b0] = hexToRgb(colors[0]);
+      const [r1,g1,b1] = hexToRgb(colors[1]);
+      const [r2,g2,b2] = hexToRgb(colors[2]);
+      grad.addColorStop(0,   `rgba(${r2},${g2},${b2},${alpha * 0.55})`);
+      grad.addColorStop(0.25,`rgba(${r1},${g1},${b1},${alpha * 0.40})`);
+      grad.addColorStop(0.6, `rgba(${r0},${g0},${b0},${alpha * 0.18})`);
+      grad.addColorStop(1,   `rgba(${r0},${g0},${b0},0)`);
+
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+      ctx.fillStyle = grad;
+      ctx.fill();
+    };
+
+    const resize = () => {
+      const dpr = window.devicePixelRatio || 1;
+      W = window.innerWidth;
+      H = window.innerHeight;
+      canvas.width = W * dpr;
+      canvas.height = H * dpr;
+      canvas.style.width = `${W}px`;
+      canvas.style.height = `${H}px`;
+      ctx.scale(dpr, dpr);
+    };
+    
+    window.addEventListener('resize', resize);
+    resize();
+
+    const TAU = Math.PI * 2;
+    const startTime = performance.now();
+
+    const render = (now: number) => {
+      const t = (now - startTime) / 1000;
+      const mn = Math.min(W, H);
+
+      ctx.fillStyle = '#070510';
+      ctx.fillRect(0, 0, W, H);
+      ctx.globalCompositeOperation = 'screen';
+
+      for (const orb of orbs) {
+        const angle = TAU * t / orb.period + orb.phase;
+        const ox = (orb.cx + Math.cos(angle) * orb.rx) * W;
+        const oy = (orb.cy + Math.sin(angle) * orb.ry) * H;
+        const radius = orb.size * mn;
+        drawOrb(ox, oy, radius, orb.colors, orb.alpha);
+      }
+
+      ctx.globalCompositeOperation = 'source-over';
+      const vig = ctx.createRadialGradient(W/2, H/2, mn*0.15, W/2, H/2, mn*0.90);
+      vig.addColorStop(0, 'rgba(7,5,16,0)');
+      vig.addColorStop(1, 'rgba(7,5,16,0.85)');
+      ctx.fillStyle = vig;
+      ctx.fillRect(0, 0, W, H);
+
+      animationFrameId = requestAnimationFrame(render);
+    };
+
+    animationFrameId = requestAnimationFrame(render);
+
+    return () => {
+      window.removeEventListener('resize', resize);
+      cancelAnimationFrame(animationFrameId);
+    };
   }, []);
 
-  const scrollToWork = (e: React.MouseEvent) => {
-    e.preventDefault();
-    const element = document.getElementById('work');
-    if (element) { element.scrollIntoView({ behavior: 'smooth' }); }
-  };
+  return <canvas ref={canvasRef} className="absolute inset-0 block z-0" />;
+};
+
+export const Hero: React.FC = () => {
+  const [thumbnails, setThumbnails] = useState<string[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    const fetchWorks = async () => {
+      try {
+        const snapshot = await getDocs(query(collection(db, "portfolios"), orderBy("order", "asc")));
+        const urls = snapshot.docs.map(doc => {
+          const data = doc.data();
+          return data.customThumbnail || `https://img.youtube.com/vi/${doc.id}/maxresdefault.jpg`;
+        });
+        setThumbnails(urls);
+        setIsLoaded(true);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchWorks();
+  }, []);
+
+  useEffect(() => {
+    if (thumbnails.length === 0) return;
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % thumbnails.length);
+    }, 3500);
+    return () => clearInterval(timer);
+  }, [thumbnails]);
 
   return (
-    <section id="hero" className="relative w-full h-[100dvh] snap-start snap-always shrink-0 overflow-hidden border-b border-white/5 bg-[#050505]">
-        <div className={`absolute inset-0 z-0 pointer-events-none overflow-hidden transition-opacity duration-[2000ms] ease-in-out ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
-            <div className="absolute inset-0 scale-[1.05] origin-center">
-                <video autoPlay loop muted playsInline preload="auto" poster="/hero-poster.jpg"
-                    onLoadedData={() => setIsLoaded(true)}
-                    className="w-full h-full object-cover blur opacity-60 saturate-100 contrast-125 hue-rotate-[-80deg]"
-                >
-                    <source src="/hero-bg.mp4" type="video/mp4" />
-                </video>
-            </div>
-            <div className="absolute inset-0 bg-gradient-to-b from-[#050505]/40 via-transparent to-[#050505] z-10"></div>
-            <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-90 z-10"></div>
-            <div className="absolute inset-0 z-20 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)', backgroundSize: '100px 100px' }}></div>
-        </div>
+    <section id="hero" className="relative w-full h-[100dvh] snap-start snap-always shrink-0 overflow-hidden bg-[#050505] text-white flex flex-col items-center justify-center">
+        
+        {/* 1. 배경 캔버스 + 오버레이 */}
+        <CanvasBackground />
+        <div className="absolute inset-0 bg-[#050505]/20 z-10 pointer-events-none"></div>
 
-        <div className="relative z-40 h-full w-full max-w-[1920px] mx-auto px-6 flex flex-col">
-            <div className="pt-24 md:pt-20 flex justify-between items-start shrink-0">
-                <div className="font-mono text-[10px] md:text-xs text-gray-500 space-y-2 uppercase tracking-widest">
-                    <p className="flex items-center gap-2"><span className="w-1 h-1 bg-green-500 rounded-full animate-pulse"></span>HANTŌME PRODUCTION</p>
-                    <p className="text-gray-400">VIRTUAL ARTIST MUSIC AGENCY</p>
-                    <p>EST. 2026</p>
+        {/* 🌟 중앙 컨텐츠 래퍼 */}
+        <div className="relative w-full flex flex-col items-center justify-center z-20">
+            
+            {/* 로고 마스킹 팝업 영역 (이미지 슬라이드) */}
+            <div className="relative w-full max-w-[90vw] md:max-w-[70vw] aspect-[3/1] flex items-center justify-center">
+                <div 
+                    className="absolute inset-0 pointer-events-none"
+                    style={{
+                        backgroundImage: `url('/logoW.png')`,
+                        backgroundSize: 'contain',
+                        backgroundPosition: 'center',
+                        backgroundRepeat: 'no-repeat',
+                        maskImage: `url('/logoW.png')`,
+                        WebkitMaskImage: `url('/logoW.png')`,
+                        maskSize: 'contain',
+                        WebkitMaskSize: 'contain',
+                        maskRepeat: 'no-repeat',
+                        WebkitMaskRepeat: 'no-repeat',
+                        maskPosition: 'center',
+                        WebkitMaskPosition: 'center',
+                    } as React.CSSProperties}
+                >
+                    <div className="w-full h-full relative overflow-hidden bg-black">
+                        {thumbnails.map((img, idx) => {
+                            const isActive = idx === currentIndex;
+                            return (
+                                <img 
+                                    key={idx} 
+                                    src={img} 
+                                    alt="portfolio" 
+                                    className="absolute inset-0 w-full h-full object-cover transition-all" 
+                                    style={{ 
+                                        transitionDuration: '800ms', 
+                                        transitionTimingFunction: 'cubic-bezier(0.175, 0.885, 0.32, 1.275)', 
+                                        opacity: isActive ? 1 : 0, 
+                                        transform: isActive ? 'scale(1)' : 'scale(0.85)', 
+                                        filter: isActive ? 'blur(8px)' : 'blur(20px)', 
+                                        zIndex: isActive ? 10 : 0 
+                                    }} 
+                                />
+                            );
+                        })}
+                    </div>
                 </div>
             </div>
-            
-            <div className="flex-1 flex flex-col items-center justify-center mix-blend-difference pb-20">
-                <Reveal><h1 className="text-[16vw] md:text-[13vw] leading-[0.85] font-bold tracking-tighter text-white whitespace-nowrap select-none text-center">HANTŌME</h1></Reveal>
-                <Reveal delay={200}>
-                    <div className="flex items-center justify-center gap-6 mt-6 md:mt-8 opacity-90">
-                        <span className="hidden md:block h-px w-16 md:w-24 bg-gradient-to-r from-transparent via-white/50 to-transparent"></span>
-                        <p className="text-xl md:text-3xl font-medium tracking-tighter text-white text-center">Define the Undefined</p>
-                        <span className="hidden md:block h-px w-16 md:w-24 bg-gradient-to-r from-transparent via-white/50 to-transparent"></span>
-                    </div>
-                </Reveal>
-                <Reveal delay={300}>
-                    <div className="mt-8 md:mt-10 flex justify-center">
-                        <div className="inline-flex items-center gap-3 px-5 py-2.5 border border-white/10 bg-white/5 backdrop-blur-md rounded-full shadow-[0_0_20px_rgba(255,255,255,0.05)]">
-                            {/* ✨ 따옴표 오류 수정 완료 */}
-                            <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span>
-                            <span className="font-mono text-[9px] md:text-[11px] text-gray-300 tracking-[0.2em] uppercase">Music Production for Virtual Artists</span>
-                        </div>
-                    </div>
-                </Reveal>
-            </div>
 
-            <div className="absolute bottom-28 md:bottom-32 left-1/2 -translate-x-1/2 w-full text-center pointer-events-none px-6 z-40">
-                <p className={`text-[3.2vw] md:text-base lg:text-lg text-gray-200 font-medium tracking-widest transition-opacity duration-[800ms] ease-in-out drop-shadow-md whitespace-nowrap ${fade ? 'opacity-100' : 'opacity-0'}`}>
-                    <span className="text-green-500 mr-2 md:mr-3 font-mono text-[10px] md:text-sm animate-pulse">▶</span>
-                    {loadingTips[tipIndex]}
+            {/* ✨ 다시 원래대로 롤백된 깔끔한 텍스트 문구 (은은한 그림자 + 넓은 자간 적용) */}
+            <div className="mt-6 md:mt-8 flex justify-center opacity-0 animate-[fadeIn_1s_ease-out_forwards] pointer-events-none" style={{ animationDelay: '200ms' }}>
+                <p className="text-[13px] md:text-base lg:text-lg font-medium tracking-[0.2em] text-white/80 drop-shadow-md uppercase text-center">
+                    크리에이터들을 위한 뮤직 프로덕션
                 </p>
             </div>
 
-            <div className="pb-4 md:pb-8 flex items-end justify-between shrink-0">
-                <div onClick={scrollToWork} className="font-mono text-[10px] text-gray-500 hidden md:block tracking-widest pointer-events-auto cursor-pointer hover:text-white transition-colors">[ SCROLL DOWN ]</div>
-                <div className="absolute bottom-8 left-1/2 -translate-x-1/2 pointer-events-auto">
-                    <Reveal delay={400}>
-                        <a href="#work" onClick={scrollToWork} className="flex flex-col items-center gap-4 group cursor-pointer">
-                             <div className="w-[1px] h-12 bg-gradient-to-b from-transparent via-gray-500 to-white opacity-50 group-hover:h-16 transition-all duration-500"></div>
-                             <ArrowDown className="w-4 h-4 text-white opacity-50 group-hover:opacity-100 transition-opacity" />
-                        </a>
-                    </Reveal>
+            {/* 로딩 표시 */}
+            {!isLoaded && (
+                <div className="absolute -bottom-16 text-white font-mono tracking-widest animate-pulse">
+                    LOADING HANTOME...
                 </div>
-                <div className="font-mono text-[10px] text-right text-gray-500 tracking-widest"><p>STATUS: ACTIVE</p><p>SYS.VER 2.5.0</p></div>
+            )}
+        </div>
+
+        {/* 하단 스크롤 버튼 (가운데 정렬, 렌더링 즉시 고정) */}
+        <div className="absolute bottom-8 left-0 w-full px-6 z-20">
+            <div className="max-w-[1920px] mx-auto flex justify-center">
+                <button 
+                    onClick={() => document.getElementById('work')?.scrollIntoView({ behavior: 'smooth' })} 
+                    className="font-mono text-xs md:text-sm font-bold tracking-widest uppercase hover:text-main-purple transition-colors flex items-center gap-2 drop-shadow-md"
+                >
+                    Scroll Down <span className="animate-bounce">↓</span>
+                </button>
             </div>
         </div>
-        
-        <div className="absolute left-6 top-1/2 -translate-y-1/2 hidden lg:block -rotate-90 origin-left z-30 pointer-events-none"><p className="text-white/[0.03] text-7xl font-bold tracking-tighter whitespace-nowrap">VIRTUAL ARTIST</p></div>
-        <div className="absolute right-6 top-1/2 -translate-y-1/2 hidden lg:block rotate-90 origin-right z-30 pointer-events-none"><p className="text-white/[0.03] text-7xl font-bold tracking-tighter whitespace-nowrap">{currentDate}</p></div>
+
+        <style>{`
+          @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+        `}</style>
     </section>
   );
 };
