@@ -5,21 +5,24 @@ export const ScrollToTop: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    // ✨ 창(window)이 아니라 App.tsx에서 만든 스크롤 박스를 찾음
+    const container = document.getElementById('main-scroll-container');
+    if (!container) return;
+
     const toggleVisibility = () => {
-      // Show button when page is scrolled down 80vh
-      if (window.scrollY > window.innerHeight * 0.8) {
+      // 컨테이너가 스크롤된 거리가 화면 높이의 80%를 넘으면 버튼 표시
+      if (container.scrollTop > window.innerHeight * 0.8) {
         setIsVisible(true);
       } else {
         setIsVisible(false);
       }
     };
 
-    window.addEventListener('scroll', toggleVisibility);
-    return () => window.removeEventListener('scroll', toggleVisibility);
+    container.addEventListener('scroll', toggleVisibility);
+    return () => container.removeEventListener('scroll', toggleVisibility);
   }, []);
 
   const scrollToTop = () => {
-    // ✨ 창 좌표 기준이 아니라, 맨 위 컴포넌트(hero)를 직접 찾아서 이동하게 변경
     document.getElementById('hero')?.scrollIntoView({ behavior: 'smooth' });
   };
 

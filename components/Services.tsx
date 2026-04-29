@@ -16,7 +16,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ index, title, subtitle, desc,
         <div className="group relative w-full h-full min-h-[350px] md:min-h-0 perspective-[1000px] cursor-pointer" onClick={() => setIsFlipped(!isFlipped)}>
             <div className={`relative w-full h-full transition-all duration-700 preserve-3d ${isFlipped ? 'rotate-y-180' : ''}`}>
                 
-                <div className="absolute inset-0 backface-hidden bg-[#050505] border border-white/30 p-5 md:p-6 flex flex-col justify-between group-hover:border-main-purple/50 transition-colors duration-500">
+                <div className="absolute inset-0 backface-hidden bg-[#050505]/60 border border-white/30 p-5 md:p-6 flex flex-col justify-between group-hover:border-main-purple/50 transition-colors duration-500 backdrop-blur-sm">
                     <div className="flex justify-between items-start shrink-0">
                         <span className="font-mono text-[9px] md:text-[10px] text-gray-500 tracking-widest">SVC_0{index + 1}</span>
                         <div className="w-1.5 h-1.5 rounded-full bg-white/20 group-hover:bg-main-purple transition-colors duration-500"></div>
@@ -30,7 +30,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ index, title, subtitle, desc,
                     </div>
                 </div>
 
-                <div className="absolute inset-0 backface-hidden rotate-y-180 bg-[#050505] border border-main-purple/50 p-5 md:p-6 flex flex-col cursor-pointer" onClick={handleClose}>
+                <div className="absolute inset-0 backface-hidden rotate-y-180 bg-[#050505]/80 border border-main-purple/50 p-5 md:p-6 flex flex-col cursor-pointer backdrop-blur-md" onClick={handleClose}>
                     <div className="flex justify-between items-start mb-4 shrink-0">
                          <span className="font-mono text-[10px] text-main-purple tracking-widest">PRICING_0{index + 1}</span>
                          <span className="text-[10px] font-mono text-gray-500">[ CLOSE ]</span>
@@ -84,14 +84,20 @@ export const Services: React.FC = () => {
   ];
 
   return (
+    // ✨ 팩트: snap-always 부활! 미끄러짐 완벽 차단
     <section id="service" className="relative w-full h-[100dvh] snap-start snap-always shrink-0 flex flex-col border-b border-white/5 bg-[#050505] overflow-hidden">
         <style>{`.preserve-3d { transform-style: preserve-3d; } .backface-hidden { backface-visibility: hidden; } .rotate-y-180 { transform: rotateY(180deg); }`}</style>
-        <div className="flex justify-between items-center px-6 py-3 border-b border-white/5 sticky top-0 z-30 bg-[#050505]/90 backdrop-blur-xl shrink-0">
-             <span className="font-mono text-[10px] text-gray-400 tracking-widest border border-white/10 px-2 py-1 rounded-full">/003</span>
-             <span className="font-mono text-[10px] text-gray-400 tracking-widest">SERVICE / PRICE</span>
+        
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[100vw] h-[100vh] pointer-events-none z-[1]" 
+             style={{ background: 'radial-gradient(circle, rgba(226,182,247,0.15) 0%, rgba(226,182,247,0) 60%)' }}>
+        </div>
+
+        <div className="flex justify-between items-center px-6 py-3 border-b border-white/5 sticky top-0 z-30 bg-[#050505]/80 backdrop-blur-xl shrink-0">
+             <span className="font-mono text-[10px] text-main-purple tracking-widest border border-main-purple/20 px-2 py-1 rounded-full bg-main-purple/5">/003</span>
+             <span className="font-mono text-[10px] text-gray-400 tracking-widest uppercase">SERVICE / PRICE</span>
         </div>
         
-        <div className="flex-1 flex flex-col max-w-[1920px] mx-auto w-full px-6 pt-8 pb-4 overflow-y-auto md:overflow-hidden no-scrollbar">
+        <div className="flex-1 flex flex-col max-w-[1920px] mx-auto w-full px-6 pt-8 pb-4 overflow-y-auto md:overflow-hidden no-scrollbar z-10 relative">
             <Reveal>
                 <div className="border-b border-white/5 pb-4 shrink-0">
                     <h2 className="text-[8vw] md:text-[4.5vw] font-bold text-white uppercase opacity-90">SERVICE / PRICE</h2>
@@ -106,7 +112,9 @@ export const Services: React.FC = () => {
             
             <div className="flex flex-col md:grid md:grid-cols-2 xl:grid-cols-4 gap-4 w-full pb-10 md:pb-0 md:flex-1 md:min-h-0">
                 {services.map((svc, i) => (
-                    <Reveal key={i} delay={i * 100} className="w-full md:h-full" width="100%"><ServiceCard {...svc} index={i} /></Reveal>
+                    <Reveal key={i} delay={i * 100} className="w-full md:h-full" width="100%">
+                        <ServiceCard {...svc} index={i} />
+                    </Reveal>
                 ))}
             </div>
         </div>

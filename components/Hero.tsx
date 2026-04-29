@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { db } from '../firebase';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+import { Reveal } from './Reveal';
 
-// 고해상도(Retina) 캔버스 배경 애니메이션
+// ✨ 배경 CSS 블러 필터를 완전히 제거하고 원본 HTML 로직을 완벽 반영
 const CanvasBackground: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -15,42 +16,12 @@ const CanvasBackground: React.FC = () => {
     let W: number, H: number;
     let animationFrameId: number;
 
+    const TAU = Math.PI * 2;
     const orbs = [
-      { cx:0.38, cy:0.50, rx:0.20, ry:0.14, period:22, phase:0.00, size:0.52, colors:['#2a1460','#7b4fcf','#c4a8f5'], alpha:0.38 },
-      { cx:0.65, cy:0.48, rx:0.17, ry:0.21, period:18, phase:2.09, size:0.48, colors:['#1a0a50','#5530aa','#9b6fef'], alpha:0.35 },
-      { cx:0.52, cy:0.32, rx:0.26, ry:0.19, period:26, phase:4.19, size:0.44, colors:['#200a40','#9040a0','#d4a8f5'], alpha:0.32 },
-      { cx:0.48, cy:0.70, rx:0.21, ry:0.15, period:30, phase:1.05, size:0.46, colors:['#120830','#4020a0','#7b4fcf'], alpha:0.34 },
-      { cx:0.45, cy:0.44, rx:0.24, ry:0.19, period:12, phase:0.50, size:0.28, colors:['#6030b0','#c4a8f5','#e8d6fd'], alpha:0.45 },
-      { cx:0.58, cy:0.56, rx:0.21, ry:0.23, period:10, phase:3.14, size:0.26, colors:['#4020a0','#9b6fef','#c4a8f5'], alpha:0.42 },
-      { cx:0.35, cy:0.62, rx:0.19, ry:0.21, period:14, phase:1.57, size:0.24, colors:['#801860','#d08ae0','#f0c8f8'], alpha:0.38 },
-      { cx:0.70, cy:0.30, rx:0.15, ry:0.19, period:16, phase:5.24, size:0.22, colors:['#3020a0','#8060d0','#c4a8f5'], alpha:0.40 },
-      { cx:0.50, cy:0.46, rx:0.30, ry:0.23, period:8,  phase:0.80, size:0.09, colors:['#c4a8f5','#e8d6fd','#ffffff'], alpha:0.70 },
-      { cx:0.42, cy:0.52, rx:0.26, ry:0.21, period:7,  phase:2.60, size:0.08, colors:['#e0a0f0','#f4d0fc','#ffffff'], alpha:0.65 },
-      { cx:0.58, cy:0.42, rx:0.22, ry:0.25, period:9,  phase:4.80, size:0.07, colors:['#a080e0','#d0b8f8','#ffffff'], alpha:0.65 },
+      { cx:0.38, cy:0.50, rx:0.25, ry:0.18, period:22, phase:0.00, size:0.5, colors:['#2a1460','#7b4fcf','#c4a8f5'], alpha:0.7 },
+      { cx:0.65, cy:0.48, rx:0.22, ry:0.25, period:18, phase:2.09, size:0.45, colors:['#1a0a50','#5530aa','#9b6fef'], alpha:0.65 },
+      { cx:0.52, cy:0.32, rx:0.30, ry:0.22, period:26, phase:4.19, size:0.4, colors:['#200a40','#4a2590','#b692f0'], alpha:0.6 }
     ];
-
-    const hexToRgb = (hex: string) => {
-      const r = parseInt(hex.slice(1,3), 16);
-      const g = parseInt(hex.slice(3,5), 16);
-      const b = parseInt(hex.slice(5,7), 16);
-      return [r, g, b];
-    };
-
-    const drawOrb = (cx: number, cy: number, radius: number, colors: string[], alpha: number) => {
-      const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
-      const [r0,g0,b0] = hexToRgb(colors[0]);
-      const [r1,g1,b1] = hexToRgb(colors[1]);
-      const [r2,g2,b2] = hexToRgb(colors[2]);
-      grad.addColorStop(0,   `rgba(${r2},${g2},${b2},${alpha * 0.55})`);
-      grad.addColorStop(0.25,`rgba(${r1},${g1},${b1},${alpha * 0.40})`);
-      grad.addColorStop(0.6, `rgba(${r0},${g0},${b0},${alpha * 0.18})`);
-      grad.addColorStop(1,   `rgba(${r0},${g0},${b0},0)`);
-
-      ctx.beginPath();
-      ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-      ctx.fillStyle = grad;
-      ctx.fill();
-    };
 
     const resize = () => {
       const dpr = window.devicePixelRatio || 1;
@@ -58,44 +29,47 @@ const CanvasBackground: React.FC = () => {
       H = window.innerHeight;
       canvas.width = W * dpr;
       canvas.height = H * dpr;
-      canvas.style.width = `${W}px`;
-      canvas.style.height = `${H}px`;
       ctx.scale(dpr, dpr);
     };
-    
-    window.addEventListener('resize', resize);
-    resize();
 
-    const TAU = Math.PI * 2;
-    const startTime = performance.now();
-
-    const render = (now: number) => {
-      const t = (now - startTime) / 1000;
+    const draw = (time: number) => {
+      ctx.clearRect(0, 0, W, H);
       const mn = Math.min(W, H);
-
-      ctx.fillStyle = '#070510';
+      
+      // 우주 배경색
+      ctx.fillStyle = '#070510'; 
       ctx.fillRect(0, 0, W, H);
+      
       ctx.globalCompositeOperation = 'screen';
 
-      for (const orb of orbs) {
-        const angle = TAU * t / orb.period + orb.phase;
-        const ox = (orb.cx + Math.cos(angle) * orb.rx) * W;
-        const oy = (orb.cy + Math.sin(angle) * orb.ry) * H;
+      orbs.forEach(orb => {
+        const t = time / 1000;
+        const x = orb.cx * W + Math.cos(TAU * t / orb.period + orb.phase) * (orb.rx * W);
+        const y = orb.cy * H + Math.sin(TAU * t / orb.period + orb.phase * 0.8) * (orb.ry * H);
+
         const radius = orb.size * mn;
-        drawOrb(ox, oy, radius, orb.colors, orb.alpha);
-      }
+        const grad = ctx.createRadialGradient(x, y, 0, x, y, radius);
+        
+        // 원본 HTML의 다층 그래디언트 로직 반영
+        grad.addColorStop(0, orb.colors[2] + 'AA'); 
+        grad.addColorStop(0.25, orb.colors[1] + '66');
+        grad.addColorStop(0.6, orb.colors[0] + '2E');
+        grad.addColorStop(1, 'transparent');
+
+        ctx.globalAlpha = orb.alpha;
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, TAU);
+        ctx.fill();
+      });
 
       ctx.globalCompositeOperation = 'source-over';
-      const vig = ctx.createRadialGradient(W/2, H/2, mn*0.15, W/2, H/2, mn*0.90);
-      vig.addColorStop(0, 'rgba(7,5,16,0)');
-      vig.addColorStop(1, 'rgba(7,5,16,0.85)');
-      ctx.fillStyle = vig;
-      ctx.fillRect(0, 0, W, H);
-
-      animationFrameId = requestAnimationFrame(render);
+      animationFrameId = requestAnimationFrame(draw);
     };
 
-    animationFrameId = requestAnimationFrame(render);
+    resize();
+    window.addEventListener('resize', resize);
+    animationFrameId = requestAnimationFrame(draw);
 
     return () => {
       window.removeEventListener('resize', resize);
@@ -103,125 +77,197 @@ const CanvasBackground: React.FC = () => {
     };
   }, []);
 
-  return <canvas ref={canvasRef} className="absolute inset-0 block z-0" />;
+  // ✨ filter: blur 제거 완료
+  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }} />;
 };
 
 export const Hero: React.FC = () => {
-  const [thumbnails, setThumbnails] = useState<string[]>([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [portfolios, setPortfolios] = useState<any[]>([]);
+  const [currentImgIdx, setCurrentImgIdx] = useState(0);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  
+  const heroRef = useRef<HTMLElement>(null);
+  const logoWrapperRef = useRef<HTMLDivElement>(null);
+  const glareRef = useRef<HTMLDivElement>(null);
+  const subtitleRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchWorks = async () => {
       try {
         const snapshot = await getDocs(query(collection(db, "portfolios"), orderBy("order", "asc")));
-        const urls = snapshot.docs.map(doc => {
-          const data = doc.data();
-          return data.customThumbnail || `https://img.youtube.com/vi/${doc.id}/maxresdefault.jpg`;
-        });
-        setThumbnails(urls);
+        const fetched = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const validPortfolios = fetched.map((p: any) => ({
+          ...p,
+          imageUrl: p.customThumbnail || `https://img.youtube.com/vi/${p.id}/maxresdefault.jpg`
+        }));
+        setPortfolios(validPortfolios);
         setIsLoaded(true);
       } catch (err) {
         console.error(err);
+        setIsLoaded(true);
       }
     };
     fetchWorks();
   }, []);
 
   useEffect(() => {
-    if (thumbnails.length === 0) return;
-    const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % thumbnails.length);
-    }, 3500);
-    return () => clearInterval(timer);
-  }, [thumbnails]);
+    if (!isHovered || portfolios.length === 0) return;
+    const interval = setInterval(() => {
+      setCurrentImgIdx((prev) => (prev + 1) % portfolios.length);
+    }, 1500);
+    return () => clearInterval(interval);
+  }, [isHovered, portfolios]);
+
+  useEffect(() => {
+    const hero = heroRef.current;
+    if (!hero || window.innerWidth < 768) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!logoWrapperRef.current || !glareRef.current || !subtitleRef.current) return;
+
+      const { clientX, clientY } = e;
+      const { innerWidth, innerHeight } = window;
+
+      const x = (clientX / innerWidth) * 2 - 1;
+      const y = (clientY / innerHeight) * 2 - 1;
+
+      const rect = logoWrapperRef.current.getBoundingClientRect();
+      setMousePos({
+        x: clientX - rect.left,
+        y: clientY - rect.top
+      });
+
+      requestAnimationFrame(() => {
+        logoWrapperRef.current!.style.transform = `rotateX(${y * -12}deg) rotateY(${x * 18}deg) scale3d(1.03, 1.03, 1.03)`;
+        const percentX = ((x + 1) / 2) * 100;
+        const percentY = ((y + 1) / 2) * 100;
+        glareRef.current!.style.background = `radial-gradient(circle at ${percentX}% ${percentY}%, rgba(226,182,247,0.35) 0%, rgba(226,182,247,0) 60%)`;
+        subtitleRef.current!.style.transform = `translateZ(20px) translateX(${x * -10}px) translateY(${y * -10}px)`;
+      });
+    };
+
+    const handleMouseLeave = () => {
+      requestAnimationFrame(() => {
+        if (logoWrapperRef.current) logoWrapperRef.current.style.transform = `rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+        if (subtitleRef.current) subtitleRef.current.style.transform = `translateZ(0px) translateX(0px) translateY(0px)`;
+      });
+    };
+
+    hero.addEventListener('mousemove', handleMouseMove);
+    hero.addEventListener('mouseleave', handleMouseLeave);
+    return () => {
+      hero.removeEventListener('mousemove', handleMouseMove);
+      hero.removeEventListener('mouseleave', handleMouseLeave);
+    };
+  }, []);
 
   return (
-    <section id="hero" className="relative w-full h-[100dvh] snap-start snap-always shrink-0 overflow-hidden bg-[#050505] text-white flex flex-col items-center justify-center">
-        
-        {/* 1. 배경 캔버스 + 오버레이 */}
+    <section 
+      ref={heroRef} 
+      id="hero" 
+      className="relative w-full h-[100dvh] snap-start snap-always shrink-0 flex flex-col justify-center items-center bg-transparent overflow-hidden"
+      style={{ perspective: '1500px' }}
+    >
         <CanvasBackground />
-        <div className="absolute inset-0 bg-[#050505]/20 z-10 pointer-events-none"></div>
 
-        {/* 🌟 중앙 컨텐츠 래퍼 */}
-        <div className="relative w-full flex flex-col items-center justify-center z-20">
-            
-            {/* 로고 마스킹 팝업 영역 (이미지 슬라이드) */}
-            <div className="relative w-full max-w-[90vw] md:max-w-[70vw] aspect-[3/1] flex items-center justify-center">
+        <div className="relative z-10 w-full flex flex-col items-center px-6">
+            <div className={`max-w-[1200px] w-full flex flex-col items-center transition-all duration-1000 ease-out ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
+                
+                {/* 로고 사이즈 1.4배 유지 */}
                 <div 
-                    className="absolute inset-0 pointer-events-none"
-                    style={{
-                        backgroundImage: `url('/logoW.png')`,
-                        backgroundSize: 'contain',
-                        backgroundPosition: 'center',
-                        backgroundRepeat: 'no-repeat',
-                        maskImage: `url('/logoW.png')`,
-                        WebkitMaskImage: `url('/logoW.png')`,
-                        maskSize: 'contain',
-                        WebkitMaskSize: 'contain',
-                        maskRepeat: 'no-repeat',
-                        WebkitMaskRepeat: 'no-repeat',
-                        maskPosition: 'center',
-                        WebkitMaskPosition: 'center',
-                    } as React.CSSProperties}
+                  ref={logoWrapperRef} 
+                  className="relative mb-6 md:mb-10 w-[95vw] md:w-[85vw] lg:w-[75vw] xl:w-[65vw] flex justify-center transition-all duration-300 ease-out cursor-crosshair" 
+                  style={{ transformStyle: 'preserve-3d' }}
+                  onMouseEnter={() => setIsHovered(true)}
+                  onMouseLeave={() => setIsHovered(false)}
                 >
-                    <div className="w-full h-full relative overflow-hidden bg-black">
-                        {thumbnails.map((img, idx) => {
-                            const isActive = idx === currentIndex;
-                            return (
-                                <img 
-                                    key={idx} 
-                                    src={img} 
-                                    alt="portfolio" 
-                                    className="absolute inset-0 w-full h-full object-cover transition-all" 
-                                    style={{ 
-                                        transitionDuration: '800ms', 
-                                        transitionTimingFunction: 'cubic-bezier(0.175, 0.885, 0.32, 1.275)', 
-                                        opacity: isActive ? 1 : 0, 
-                                        transform: isActive ? 'scale(1)' : 'scale(0.85)', 
-                                        filter: isActive ? 'blur(8px)' : 'blur(20px)', 
-                                        zIndex: isActive ? 10 : 0 
-                                    }} 
-                                />
-                            );
-                        })}
-                    </div>
+                    <div 
+                      ref={glareRef}
+                      className="absolute inset-0 z-30 pointer-events-none rounded-full blur-[40px] mix-blend-screen transition-all duration-300 ease-out opacity-50"
+                      style={{ background: `radial-gradient(circle at 50% 50%, rgba(226,182,247,0.2) 0%, rgba(226,182,247,0) 60%)` }}
+                    />
+
+                    {/* 기본 로고 레이어 */}
+                    <img 
+                      src="/logo.png" 
+                      alt="HANTŌME" 
+                      className="w-full h-auto object-contain transition-all duration-700 ease-out z-20"
+                      style={{ 
+                        filter: 'drop-shadow(0px 0px 30px rgba(226,182,247,0.3)) brightness(1.1)',
+                        transform: 'translateZ(40px)'
+                      }}
+                    />
+
+                    {/* ✨ 포트폴리오 창문 (스포트라이트) : 선명도 up, 지름 대폭 확대 */}
+                    {portfolios.length > 0 && (
+                      <div 
+                        className={`absolute inset-0 w-full h-full transition-all duration-500 ease-out z-25 pointer-events-none ${isHovered ? 'opacity-100' : 'opacity-0'}`}
+                        style={{ 
+                          WebkitMaskImage: 'url(/logoW.png)', 
+                          WebkitMaskSize: 'contain', 
+                          WebkitMaskPosition: 'center', 
+                          WebkitMaskRepeat: 'no-repeat',
+                          maskImage: 'url(/logoW.png)', 
+                          maskSize: 'contain', 
+                          maskPosition: 'center', 
+                          maskRepeat: 'no-repeat',
+                          transform: 'translateZ(50px)'
+                        }}
+                      >
+                        <div 
+                          className="w-full h-full relative"
+                          style={{
+                            // 지름 360px로 시원하게 확대
+                            WebkitMaskImage: `radial-gradient(circle 360px at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 100%)`,
+                            maskImage: `radial-gradient(circle 360px at ${mousePos.x}px ${mousePos.y}px, black 0%, transparent 100%)`
+                          }}
+                        >
+                          {portfolios.map((p, idx) => (
+                            <div 
+                              key={p.id}
+                              className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out ${idx === currentImgIdx ? 'opacity-100' : 'opacity-0'}`}
+                            >
+                              <img 
+                                src={p.imageUrl} 
+                                alt="portfolio" 
+                                // ✨ 블러 4px로 선명하게 조정
+                                className="w-full h-full object-cover scale-110 blur-[4px] brightness-125"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                 </div>
             </div>
 
-            {/* ✨ 다시 원래대로 롤백된 깔끔한 텍스트 문구 (은은한 그림자 + 넓은 자간 적용) */}
-            <div className="mt-6 md:mt-8 flex justify-center opacity-0 animate-[fadeIn_1s_ease-out_forwards] pointer-events-none" style={{ animationDelay: '200ms' }}>
-                <p className="text-[13px] md:text-base lg:text-lg font-medium tracking-[0.2em] text-white/80 drop-shadow-md uppercase text-center">
-                    크리에이터들을 위한 뮤직 프로덕션
-                </p>
+            <div ref={subtitleRef} className="mt-6 md:mt-8 w-full flex justify-center transition-all duration-300 ease-out pointer-events-none" style={{ transformStyle: 'preserve-3d' }}>
+                <Reveal delay={200}>
+                    <p className="text-[13px] md:text-base lg:text-lg font-medium tracking-[0.2em] text-white/80 drop-shadow-md uppercase text-center">
+                        크리에이터들을 위한 뮤직 프로덕션
+                    </p>
+                </Reveal>
             </div>
-
-            {/* 로딩 표시 */}
-            {!isLoaded && (
-                <div className="absolute -bottom-16 text-white font-mono tracking-widest animate-pulse">
-                    LOADING HANTOME...
-                </div>
-            )}
         </div>
 
-        {/* 하단 스크롤 버튼 (가운데 정렬, 렌더링 즉시 고정) */}
-        <div className="absolute bottom-8 left-0 w-full px-6 z-20">
+        <div className="absolute bottom-8 left-0 w-full px-6 z-20 pointer-events-auto">
             <div className="max-w-[1920px] mx-auto flex justify-center">
                 <button 
-                    onClick={() => document.getElementById('work')?.scrollIntoView({ behavior: 'smooth' })} 
+                    onClick={() => {
+                        const container = document.getElementById('main-scroll-container');
+                        const workElement = document.getElementById('work');
+                        if (container && workElement) {
+                            container.scrollTo({ top: workElement.offsetTop, behavior: 'smooth' });
+                        }
+                    }} 
                     className="font-mono text-xs md:text-sm font-bold tracking-widest uppercase hover:text-main-purple transition-colors flex items-center gap-2 drop-shadow-md"
                 >
                     Scroll Down <span className="animate-bounce">↓</span>
                 </button>
             </div>
         </div>
-
-        <style>{`
-          @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-          }
-        `}</style>
     </section>
   );
 };

@@ -9,7 +9,7 @@ interface ProjectProps { id: string; title: string; customThumbnail?: string; }
 const ProjectCard: React.FC<ProjectProps> = ({ id, title, customThumbnail }) => {
   return (
     <div onClick={() => window.open(`https://www.youtube.com/watch?v=${id}`, '_blank')} className="group/card cursor-pointer flex flex-col gap-2 w-[180px] md:w-[280px] shrink-0 snap-start relative">
-        <div className="relative aspect-video w-full overflow-hidden bg-[#111] border border-white/10 group-hover/card:border-white/30 transition-all duration-500">
+        <div className="relative aspect-video w-full overflow-hidden bg-[#111] border border-white/10 group-hover/card:border-white/30 transition-all duration-500 shadow-xl">
              <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-white/50 z-20 transition-all duration-300 group-hover/card:w-4 group-hover/card:h-4"></div>
              <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-white/50 z-20 transition-all duration-300 group-hover/card:w-4 group-hover/card:h-4"></div>
              <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-white/50 z-20 transition-all duration-300 group-hover/card:w-4 group-hover/card:h-4"></div>
@@ -74,7 +74,7 @@ const ProjectRow: React.FC<{ title: string; subtitle: string; projects: any[] }>
             <div className="relative group w-full flex flex-col justify-center md:flex-1">
                  <button onClick={() => scroll('left')} className="hidden md:flex absolute left-0 top-[40%] z-30 -translate-y-1/2 p-2 bg-black/40 text-white border-y border-r border-white/20 hover:bg-white hover:text-black"><ChevronLeft className="w-4 h-4" /></button>
                 <button onClick={() => scroll('right')} className="hidden md:flex absolute right-0 top-[40%] z-30 -translate-y-1/2 p-2 bg-black/40 text-white border-y border-l border-white/20 hover:bg-white hover:text-black"><ChevronRight className="w-4 h-4" /></button>
-                <div ref={scrollRef} className="flex overflow-x-auto gap-3 md:gap-4 px-6 md:px-0 pb-3 snap-x snap-mandatory no-scrollbar scroll-smooth w-full min-h-[160px] md:min-h-0" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                <div ref={scrollRef} className="flex overflow-x-auto gap-3 md:gap-4 px-6 md:px-0 pb-3 snap-x snap-mandatory no-scrollbar scroll-smooth w-full min-h-[160px] md:min-h-0 z-10" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                     {projects.map((project, index) => (<ProjectCard key={index} id={project.id} title={project.title} customThumbnail={project.customThumbnail} />))}
                     <div className="w-6 shrink-0 md:hidden"></div>
                 </div>
@@ -104,13 +104,19 @@ export const Work: React.FC = () => {
   if (loading) return <div className="h-[100dvh] w-full flex items-center justify-center text-gray-500 font-mono tracking-widest uppercase bg-[#050505]">Initializing Archive...</div>;
 
   return (
+        // ✨ 팩트: snap-always 추가로 무조건 한 장씩 멈추게 브레이크 걸기
         <section id="work" className="w-full h-[100dvh] snap-start snap-always shrink-0 bg-[#050505] flex flex-col overflow-hidden relative border-b border-white/5">
-             <div className="flex justify-between items-center px-6 py-3 border-b border-white/5 sticky top-0 z-30 bg-[#050505]/90 backdrop-blur-xl shrink-0">
-                 <span className="font-mono text-[10px] text-gray-400 tracking-widest border border-white/10 px-2 py-1 rounded-full">/001</span>
+             
+             <div className="absolute top-1/2 right-0 w-[100vw] h-[100vh] pointer-events-none -translate-y-1/2 translate-x-1/3 z-[1]" 
+                  style={{ background: 'radial-gradient(circle, rgba(226,182,247,0.2) 0%, rgba(226,182,247,0) 65%)' }}>
+             </div>
+
+             <div className="flex justify-between items-center px-6 py-3 border-b border-white/5 sticky top-0 z-30 bg-[#050505]/80 backdrop-blur-xl shrink-0">
+                 <span className="font-mono text-[10px] text-main-purple tracking-widest border border-main-purple/20 px-2 py-1 rounded-full bg-main-purple/5">/001</span>
                  <span className="font-mono text-[10px] text-gray-400 tracking-widest">PORTFOLIO</span>
              </div>
              
-             <div className="flex-1 flex flex-col justify-center max-w-[1920px] mx-auto w-full md:px-6 pt-8 pb-2 md:pb-4 overflow-hidden">
+             <div className="flex-1 flex flex-col justify-center max-w-[1920px] mx-auto w-full md:px-6 pt-8 pb-2 md:pb-4 overflow-hidden z-10 relative">
                  <Reveal>
                     <div className="mb-2 md:mb-4 px-6 md:px-0 pb-2 md:pb-4 border-b border-white/5 relative shrink-0">
                          <h2 className="text-[8vw] md:text-[5vw] lg:text-[4.5vw] leading-[0.8] font-bold tracking-tighter text-white uppercase opacity-90">
