@@ -28,13 +28,13 @@ const XIcon = ({ className }: { className?: string }) => (
 
 export const Contact: React.FC = () => {
   const socialLinks = [
-    { label: 'Youtube', icon: YoutubeIcon, url: 'https://www.youtube.com/@hantomeproduction', color: 'hover:bg-[#FF0000]/10 hover:border-[#FF0000]/50' },
+    // ✨ 한토메 유튜브 주소 업데이트 완료
+    { label: 'Youtube', icon: YoutubeIcon, url: 'https://www.youtube.com/@%ED%95%9C%ED%86%A0%EB%A9%94%ED%94%84%EB%A1%9C%EB%8D%95%EC%85%98', color: 'hover:bg-[#FF0000]/10 hover:border-[#FF0000]/50' },
     { label: 'Instagram', icon: InstagramIcon, url: 'https://www.instagram.com/hantomeproduction/', color: 'hover:bg-[#bc1888]/10 hover:border-[#bc1888]/50' },
     { label: 'Twitter(X)', icon: XIcon, url: 'https://x.com/Hantome_Product', color: 'hover:bg-white/10 hover:border-white/50' }
   ];
 
   const scrollToTop = () => {
-    // ✨ 부모 스크롤 컨테이너 기준으로 맨 위로 이동하게 수정
     const container = document.getElementById('main-scroll-container');
     if (container) {
       container.scrollTo({ top: 0, behavior: 'smooth' });
@@ -42,8 +42,7 @@ export const Contact: React.FC = () => {
   };
 
   return (
-    // ✨ 팩트: snap-always 부활! 미끄러짐 완벽 차단
-    <section id="contact" className="relative w-full h-[100dvh] snap-start snap-always shrink-0 flex flex-col bg-[#050505] overflow-hidden">
+    <section id="contact" className="relative w-full h-auto min-h-[100dvh] md:h-[100dvh] snap-start snap-always shrink-0 flex flex-col bg-[#050505] overflow-y-auto md:overflow-hidden">
         
         <div className="absolute bottom-0 right-0 w-[100vw] h-[100vh] pointer-events-none translate-x-1/4 translate-y-1/4 z-[1]" 
              style={{ background: 'radial-gradient(circle, rgba(226,182,247,0.18) 0%, rgba(226,182,247,0) 65%)' }}>
@@ -54,7 +53,7 @@ export const Contact: React.FC = () => {
              <span className="font-mono text-[10px] text-gray-400 tracking-widest uppercase">CONTACT</span>
         </div>
 
-        <div className="flex-1 flex flex-col justify-center px-6 max-w-[1920px] mx-auto w-full min-h-0 py-10 relative z-10">
+        <div className="flex-1 flex flex-col justify-center px-6 max-w-[1920px] mx-auto w-full min-h-0 py-16 md:py-10 relative z-10">
             <Reveal>
                 <div className="flex items-center gap-4 mb-4">
                     <span className="w-12 h-[2px] bg-main-purple shadow-[0_0_10px_#E2B6F7]"></span>
@@ -75,16 +74,17 @@ export const Contact: React.FC = () => {
                             </a>
                         </div>
                         <div className="flex flex-col gap-6 items-start">
-                            <a href="https://discord.gg/hnG4KkmY" target="_blank" rel="noopener noreferrer" className="group w-fit inline-flex items-center gap-4 px-8 py-5 border border-[#5865F2]/30 bg-[#5865F2]/10 text-white font-bold tracking-widest text-xs hover:bg-[#5865F2] hover:text-white transition-all duration-300 uppercase shadow-[0_0_20px_rgba(88,101,242,0.2)]">
-                                <span className="relative z-10 flex items-center gap-3"><DiscordIcon className="w-5 h-auto" />JOIN OUR DISCORD</span>
+                            {/* ✨ 디스코드 링크 업데이트 완료 */}
+                            <a href="https://discord.gg/EMuhwwUJZs" target="_blank" rel="noopener noreferrer" className="group w-full md:w-fit inline-flex items-center gap-4 px-8 py-5 border border-[#5865F2]/30 bg-[#5865F2]/10 text-white font-bold tracking-widest text-xs hover:bg-[#5865F2] hover:text-white transition-all duration-300 uppercase shadow-[0_0_20px_rgba(88,101,242,0.2)]">
+                                <span className="relative z-10 flex items-center justify-center gap-3 w-full"><DiscordIcon className="w-5 h-auto" />JOIN OUR DISCORD</span>
                             </a>
                         </div>
                      </Reveal>
                 </div>
 
-                <div className="lg:col-span-5 flex justify-end items-start mt-8 lg:mt-0 w-full">
+                <div className="lg:col-span-5 flex justify-start lg:justify-end items-start mt-8 lg:mt-0 w-full">
                     <Reveal delay={200} width="100%">
-                        <div className="grid grid-cols-3 gap-3 w-full lg:w-[400px] xl:w-[480px] ml-auto">
+                        <div className="grid grid-cols-3 gap-3 w-full lg:w-[400px] xl:w-[480px]">
                             {socialLinks.map((sns, i) => (
                                 <a key={i} href={sns.url} target="_blank" rel="noopener noreferrer" className={`block w-full aspect-square border border-white/10 relative transition-all duration-500 group overflow-hidden bg-[#050505]/40 backdrop-blur-sm ${sns.color}`}>
                                     <div className="absolute top-3 left-3 right-3 flex justify-between items-start z-20">
@@ -92,7 +92,7 @@ export const Contact: React.FC = () => {
                                         <ArrowUpRight className="w-4 h-4 text-gray-600 group-hover:text-white" />
                                     </div>
                                     <div className="absolute inset-0 flex items-center justify-center transform transition-transform group-hover:scale-110 duration-700 z-10">
-                                        <sns.icon className="w-10 h-10 md:w-14" />
+                                        <sns.icon className="w-8 h-8 md:w-14 md:h-14" />
                                     </div>
                                 </a>
                             ))}
@@ -102,8 +102,8 @@ export const Contact: React.FC = () => {
             </div>
         </div>
         
-        <footer className="py-12 border-t border-white/10 shrink-0 bg-[#050505] relative z-20">
-            <div className="max-w-[1920px] mx-auto px-6 flex flex-col md:flex-row justify-between items-center md:items-end gap-8">
+        <footer className="py-16 border-t border-white/10 shrink-0 bg-[#050505] relative z-20">
+            <div className="max-w-[1920px] mx-auto px-6 flex flex-col md:flex-row justify-between items-center md:items-end gap-12 md:gap-8">
                 
                 <div className="flex flex-col items-center md:items-start text-center md:text-left">
                     <img src="/logo.png" alt="HANTŌME" className="h-8 md:h-12 object-contain mb-4" />
@@ -122,7 +122,7 @@ export const Contact: React.FC = () => {
                     </button>
                 </div>
 
-                <div className="flex flex-col items-center md:items-end text-center md:text-right gap-4">
+                <div className="flex flex-col items-center md:items-end text-center md:text-right gap-6 md:gap-4">
                     <div className="flex gap-8 text-[11px] font-mono text-gray-500 uppercase tracking-widest">
                         <a href="#" className="hover:text-main-purple transition-colors">Terms</a>
                         <a href="#" className="hover:text-main-purple transition-colors">Privacy</a>
