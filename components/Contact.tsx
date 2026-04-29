@@ -28,7 +28,6 @@ const XIcon = ({ className }: { className?: string }) => (
 
 export const Contact: React.FC = () => {
   const socialLinks = [
-    // ✨ 한토메 유튜브 주소 업데이트 완료
     { label: 'Youtube', icon: YoutubeIcon, url: 'https://www.youtube.com/@%ED%95%9C%ED%86%A0%EB%A9%94%ED%94%84%EB%A1%9C%EB%8D%95%EC%85%98', color: 'hover:bg-[#FF0000]/10 hover:border-[#FF0000]/50' },
     { label: 'Instagram', icon: InstagramIcon, url: 'https://www.instagram.com/hantomeproduction/', color: 'hover:bg-[#bc1888]/10 hover:border-[#bc1888]/50' },
     { label: 'Twitter(X)', icon: XIcon, url: 'https://x.com/Hantome_Product', color: 'hover:bg-white/10 hover:border-white/50' }
@@ -42,7 +41,8 @@ export const Contact: React.FC = () => {
   };
 
   return (
-    <section id="contact" className="relative w-full h-auto min-h-[100dvh] md:h-[100dvh] snap-start snap-always shrink-0 flex flex-col bg-[#050505] overflow-y-auto md:overflow-hidden">
+    // ✨ 핵심 수정: overflow-x-hidden 추가하여 모바일 스와이프 시 빈 공간 노출 방지
+    <section id="contact" className="relative w-full h-auto min-h-[100dvh] md:h-[100dvh] snap-start snap-always shrink-0 flex flex-col bg-[#050505] overflow-x-hidden overflow-y-auto md:overflow-hidden">
         
         <div className="absolute bottom-0 right-0 w-[100vw] h-[100vh] pointer-events-none translate-x-1/4 translate-y-1/4 z-[1]" 
              style={{ background: 'radial-gradient(circle, rgba(226,182,247,0.18) 0%, rgba(226,182,247,0) 65%)' }}>
@@ -69,12 +69,12 @@ export const Contact: React.FC = () => {
                      <Reveal delay={100}>
                         <div className="mb-10">
                             <p className="font-mono text-[10px] text-main-purple/60 mb-4 tracking-widest uppercase font-bold">[ EMAIL INQUIRIES ]</p>
-                            <a href="mailto:hantomeproduction@gmail.com" className="text-2xl md:text-4xl lg:text-5xl hover:text-main-purple transition-all duration-500 block font-bold tracking-tight break-all">
+                            {/* ✨ 핵심 수정: 폰트 크기를 유동적으로 조절(clamp)하고 모바일 기본 크기를 줄여서 줄바꿈 해결 */}
+                            <a href="mailto:hantomeproduction@gmail.com" className="text-[1.2rem] sm:text-2xl md:text-4xl lg:text-5xl hover:text-main-purple transition-all duration-500 block font-bold tracking-tight break-all">
                                 hantomeproduction<span className="text-main-purple">@</span>gmail.com
                             </a>
                         </div>
                         <div className="flex flex-col gap-6 items-start">
-                            {/* ✨ 디스코드 링크 업데이트 완료 */}
                             <a href="https://discord.gg/EMuhwwUJZs" target="_blank" rel="noopener noreferrer" className="group w-full md:w-fit inline-flex items-center gap-4 px-8 py-5 border border-[#5865F2]/30 bg-[#5865F2]/10 text-white font-bold tracking-widest text-xs hover:bg-[#5865F2] hover:text-white transition-all duration-300 uppercase shadow-[0_0_20px_rgba(88,101,242,0.2)]">
                                 <span className="relative z-10 flex items-center justify-center gap-3 w-full"><DiscordIcon className="w-5 h-auto" />JOIN OUR DISCORD</span>
                             </a>
@@ -82,9 +82,10 @@ export const Contact: React.FC = () => {
                      </Reveal>
                 </div>
 
+                {/* ✨ 핵심 수정: lg:ml-auto와 lg:max-w-fit을 활용하여 PC에서 오른쪽 정렬 완벽 구현 */}
                 <div className="lg:col-span-5 flex justify-start lg:justify-end items-start mt-8 lg:mt-0 w-full">
                     <Reveal delay={200} width="100%">
-                        <div className="grid grid-cols-3 gap-3 w-full lg:w-[400px] xl:w-[480px]">
+                        <div className="grid grid-cols-3 gap-3 w-full lg:w-[400px] xl:w-[480px] lg:ml-auto">
                             {socialLinks.map((sns, i) => (
                                 <a key={i} href={sns.url} target="_blank" rel="noopener noreferrer" className={`block w-full aspect-square border border-white/10 relative transition-all duration-500 group overflow-hidden bg-[#050505]/40 backdrop-blur-sm ${sns.color}`}>
                                     <div className="absolute top-3 left-3 right-3 flex justify-between items-start z-20">
