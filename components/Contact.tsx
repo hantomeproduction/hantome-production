@@ -1,6 +1,7 @@
 import React from 'react';
 import { Reveal } from './Reveal';
-import { ArrowUpRight, ArrowUp } from 'lucide-react';
+// ✨ 안 쓰는 ArrowUp 아이콘 수입도 깔끔하게 제거했어
+import { ArrowUpRight } from 'lucide-react';
 
 const DiscordIcon = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 127.14 96.36" fill="#5865F2" className={className} xmlns="http://www.w3.org/2000/svg"><path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.11,77.11,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22c2.36-24.44-5-47.25-18.9-72.15ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/></svg>
@@ -33,15 +34,7 @@ export const Contact: React.FC = () => {
     { label: 'Twitter(X)', icon: XIcon, url: 'https://x.com/Hantome_Product', color: 'hover:bg-white/10 hover:border-white/50' }
   ];
 
-  const scrollToTop = () => {
-    const container = document.getElementById('main-scroll-container');
-    if (container) {
-      container.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
-
   return (
-    // ✨ 핵심 수정: overflow-x-hidden 추가하여 모바일 스와이프 시 빈 공간 노출 방지
     <section id="contact" className="relative w-full h-auto min-h-[100dvh] md:h-[100dvh] snap-start snap-always shrink-0 flex flex-col bg-[#050505] overflow-x-hidden overflow-y-auto md:overflow-hidden">
         
         <div className="absolute bottom-0 right-0 w-[100vw] h-[100vh] pointer-events-none translate-x-1/4 translate-y-1/4 z-[1]" 
@@ -69,7 +62,6 @@ export const Contact: React.FC = () => {
                      <Reveal delay={100}>
                         <div className="mb-10">
                             <p className="font-mono text-[10px] text-main-purple/60 mb-4 tracking-widest uppercase font-bold">[ EMAIL INQUIRIES ]</p>
-                            {/* ✨ 핵심 수정: 폰트 크기를 유동적으로 조절(clamp)하고 모바일 기본 크기를 줄여서 줄바꿈 해결 */}
                             <a href="mailto:hantomeproduction@gmail.com" className="text-[1.2rem] sm:text-2xl md:text-4xl lg:text-5xl hover:text-main-purple transition-all duration-500 block font-bold tracking-tight break-all">
                                 hantomeproduction<span className="text-main-purple">@</span>gmail.com
                             </a>
@@ -82,7 +74,6 @@ export const Contact: React.FC = () => {
                      </Reveal>
                 </div>
 
-                {/* ✨ 핵심 수정: lg:ml-auto와 lg:max-w-fit을 활용하여 PC에서 오른쪽 정렬 완벽 구현 */}
                 <div className="lg:col-span-5 flex justify-start lg:justify-end items-start mt-8 lg:mt-0 w-full">
                     <Reveal delay={200} width="100%">
                         <div className="grid grid-cols-3 gap-3 w-full lg:w-[400px] xl:w-[480px] lg:ml-auto">
@@ -104,6 +95,7 @@ export const Contact: React.FC = () => {
         </div>
         
         <footer className="py-16 border-t border-white/10 shrink-0 bg-[#050505] relative z-20">
+            {/* ✨ 불필요해진 justify-between 대신 두 그룹(로고/정책)이 양끝으로 가도록 레이아웃 심플하게 정리 */}
             <div className="max-w-[1920px] mx-auto px-6 flex flex-col md:flex-row justify-between items-center md:items-end gap-12 md:gap-8">
                 
                 <div className="flex flex-col items-center md:items-start text-center md:text-left">
@@ -114,14 +106,7 @@ export const Contact: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="hidden md:block absolute left-1/2 -translate-x-1/2 bottom-12">
-                    <button 
-                        onClick={scrollToTop}
-                        className="w-16 h-16 rounded-full border border-main-purple/20 flex items-center justify-center text-white hover:bg-main-purple hover:text-black hover:border-main-purple transition-all duration-500 group bg-main-purple/5 shadow-[0_0_20px_rgba(226,182,247,0.1)]"
-                    >
-                        <ArrowUp className="w-7 h-7 transition-transform group-hover:-translate-y-2" />
-                    </button>
-                </div>
+                {/* 중앙 버튼 있던 자리 완벽하게 삭제 완료 */}
 
                 <div className="flex flex-col items-center md:items-end text-center md:text-right gap-6 md:gap-4">
                     <div className="flex gap-8 text-[11px] font-mono text-gray-500 uppercase tracking-widest">
