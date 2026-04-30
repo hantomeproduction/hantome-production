@@ -20,7 +20,7 @@ function App() {
         <Hero />
         <Work />
         <About />
-        <Services />
+        {/* <Services /> */}
         <Contact />
         <ScrollToTop />
       </div>
