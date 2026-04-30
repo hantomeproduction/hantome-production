@@ -44,7 +44,7 @@ export const Home: React.FC = () => {
         <Hero />
         <Work />
         <About />
-        <Services />
+        {/* <Services /> */}
         <Contact />
         {/* ✨ 푸터(Footer)는 여기서 지우고 Contact 안으로 넣었어! */}
       </main>

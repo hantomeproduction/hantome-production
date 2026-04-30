@@ -40,7 +40,7 @@ export const Navbar: React.FC = () => {
   const navItems = [
     { label: '포트폴리오', id: 'work' },
     { label: '소개', id: 'about' },
-    { label: '서비스 / 가격', id: 'service' },
+    // { label: '서비스 / 가격', id: 'service' },
     { label: '문의', id: 'contact' },
     { label: '관리자', id: 'admin' },
   ];
