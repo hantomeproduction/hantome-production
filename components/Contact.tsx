@@ -95,35 +95,36 @@ export const Contact: React.FC = () => {
             </div>
         </div>
         
-        <footer className="py-16 border-t border-white/10 shrink-0 bg-[#050505] relative z-20">
-            {/* ✨ 불필요해진 justify-between 대신 두 그룹(로고/정책)이 양끝으로 가도록 레이아웃 심플하게 정리 */}
-            <div className="max-w-[1920px] mx-auto px-6 flex flex-col md:flex-row justify-between items-center md:items-end gap-12 md:gap-8">
-                
-                <div className="flex flex-col items-center md:items-start text-center md:text-left">
-                    <img src="/logo.png" alt="HANTŌME" className="h-8 md:h-12 object-contain mb-4" />
-                    <div className="flex flex-col gap-1 text-[11px] text-gray-500 font-light tracking-wide">
+        <footer className="py-6 md:py-16 border-t border-white/10 shrink-0 bg-[#050505] relative z-20">
+            <div className="max-w-[1920px] mx-auto px-6 flex flex-col gap-3 md:flex-row md:justify-between md:items-end md:gap-8">
+
+                {/* 모바일: 로고 + Top 버튼 한 줄 */}
+                <div className="flex items-center justify-between md:flex-col md:items-start md:gap-0">
+                    <img src="/logo.png" alt="HANTŌME" className="h-7 md:h-12 object-contain md:mb-4" />
+                    <button
+                        onClick={() => document.getElementById('hero')?.scrollIntoView({ behavior: 'smooth' })}
+                        className="md:hidden flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 text-white/50 text-[10px] font-mono tracking-widest uppercase"
+                    >
+                        <ArrowUp className="w-3 h-3" />
+                        Top
+                    </button>
+                    <div className="hidden md:flex flex-col gap-1 text-[11px] text-gray-500 font-light tracking-wide">
                         <p>Virtual Artist Management & Creative Production.</p>
                         <p className="text-main-purple/60">Defined by your imagination.</p>
                     </div>
                 </div>
 
-                <button
-                    onClick={() => document.getElementById('hero')?.scrollIntoView({ behavior: 'smooth' })}
-                    className="md:hidden flex items-center gap-2 px-5 py-3 rounded-full border border-white/10 text-white/60 text-[11px] font-mono tracking-widest uppercase hover:border-main-purple hover:text-main-purple transition-colors"
-                >
-                    <ArrowUp className="w-3.5 h-3.5" />
-                    Top
-                </button>
-
-                <div className="flex flex-col items-center md:items-end text-center md:text-right gap-6 md:gap-4">
-                    <div className="flex gap-8 text-[11px] font-mono text-gray-500 uppercase tracking-widest">
-                        <a href="#" className="hover:text-main-purple transition-colors">Terms</a>
-                        <a href="#" className="hover:text-main-purple transition-colors">Privacy</a>
-                    </div>
+                {/* 모바일: 카피라이트 + Terms 한 줄 */}
+                <div className="flex items-center justify-between md:flex-col md:items-end md:gap-4">
                     <div className="text-[10px] font-mono text-gray-600 tracking-widest uppercase">
                         © 2026 HANTŌME PRODUCTION.
                     </div>
+                    <div className="flex gap-6 text-[10px] md:text-[11px] font-mono text-gray-500 uppercase tracking-widest">
+                        <a href="#" className="hover:text-main-purple transition-colors">Terms</a>
+                        <a href="#" className="hover:text-main-purple transition-colors">Privacy</a>
+                    </div>
                 </div>
+
             </div>
         </footer>
     </section>
