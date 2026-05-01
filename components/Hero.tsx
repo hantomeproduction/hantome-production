@@ -170,6 +170,7 @@ export const Hero: React.FC = () => {
       className="relative w-full h-[100dvh] snap-start snap-always shrink-0 flex flex-col justify-center items-center bg-transparent overflow-hidden"
       style={{ perspective: '1500px' }}
     >
+        <h1 className="sr-only">한토메 프로덕션 — 버츄얼 아티스트 매니지먼트 & 뮤직 프로덕션</h1>
         <CanvasBackground />
 
         <div className="relative z-10 w-full flex flex-col items-center px-6">
@@ -231,7 +232,7 @@ export const Hero: React.FC = () => {
                             >
                               <img 
                                 src={p.imageUrl} 
-                                alt="portfolio" 
+                                alt={`포트폴리오 이미지 ${idx + 1}`}
                                 // ✨ 블러 4px로 선명하게 조정
                                 className="w-full h-full object-cover scale-110 blur-[4px] brightness-125"
                               />

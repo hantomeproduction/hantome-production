@@ -59,7 +59,7 @@ export const Navbar: React.FC = () => {
                 ))}
             </div>
             <div className="md:hidden">
-                <button onClick={() => setIsMobileMenuOpen(true)} className="text-white p-2 bg-black/40 backdrop-blur-sm rounded-full border border-white/10"><Menu className="w-6 h-6" /></button>
+                <button onClick={() => setIsMobileMenuOpen(true)} aria-label="메뉴 열기" className="text-white p-2 bg-black/40 backdrop-blur-sm rounded-full border border-white/10"><Menu className="w-6 h-6" /></button>
             </div>
         </div>
 
