@@ -23,7 +23,7 @@ export const Navbar: React.FC = () => {
   const handleNavigation = (id: string) => (e: React.MouseEvent) => {
     e.preventDefault();
     setIsMobileMenuOpen(false);
-    if (id === 'admin') { navigate('/admin'); return; }
+    if (id === 'admin') { navigate('/qksxnaud'); return; }
     if (id === 'hero') {
       if (location.pathname !== '/') navigate('/');
       else document.getElementById('hero')?.scrollIntoView({ behavior: 'smooth' });
@@ -42,7 +42,6 @@ export const Navbar: React.FC = () => {
     { label: '소개', id: 'about' },
     // { label: '서비스 / 가격', id: 'service' },
     { label: '문의', id: 'contact' },
-    { label: '관리자', id: 'admin' },
   ];
 
   return (
