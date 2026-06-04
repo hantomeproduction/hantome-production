@@ -6,6 +6,12 @@ const Logo = ({ className }: { className?: string }) => (
   <img src="/logo.png" alt="HANTŌME" className={`object-contain ${className}`} />
 );
 
+type NavItem = {
+  label: string;
+  id: string;
+  path?: string;
+};
+
 export const Navbar: React.FC = () => {
   const [isHeroVisible, setIsHeroVisible] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -24,6 +30,7 @@ export const Navbar: React.FC = () => {
     e.preventDefault();
     setIsMobileMenuOpen(false);
     if (id === 'admin') { navigate('/qksxnaud'); return; }
+    if (id === 'original-song') { navigate('/original-song?source=homepage'); return; }
     if (id === 'hero') {
       if (location.pathname !== '/') navigate('/');
       else document.getElementById('hero')?.scrollIntoView({ behavior: 'smooth' });
@@ -37,11 +44,12 @@ export const Navbar: React.FC = () => {
   };
 
   // ✨ 메뉴 한글화
-  const navItems = [
+  const navItems: NavItem[] = [
     { label: '포트폴리오', id: 'work' },
     { label: '소개', id: 'about' },
     // { label: '서비스 / 가격', id: 'service' },
     { label: '문의', id: 'contact' },
+    { label: '제작 문의', id: 'original-song', path: '/original-song?source=homepage' },
   ];
 
   return (
@@ -52,7 +60,7 @@ export const Navbar: React.FC = () => {
             </a>
             <div className="hidden md:flex flex-col gap-2.5 items-end">
                 {navItems.map((item) => (
-                    <a key={item.label} href={`#${item.id}`} onClick={handleNavigation(item.id)} className="group relative px-2 py-1 text-[13px] font-semibold text-white hover:text-main-purple transition-colors tracking-widest">
+                    <a key={item.label} href={item.path ?? `#${item.id}`} onClick={handleNavigation(item.id)} className="group relative px-2 py-1 text-[13px] font-semibold text-white hover:text-main-purple transition-colors tracking-widest">
                         {item.label}
                     </a>
                 ))}
@@ -67,7 +75,7 @@ export const Navbar: React.FC = () => {
                 <a href="#" onClick={handleNavigation('hero')} className="shrink-0"><Logo className="h-4 md:h-5 text-white" /></a>
                 <div className="hidden md:flex gap-6 lg:gap-8 items-center">
                     {navItems.map((item) => (
-                        <a key={item.label} href={`#${item.id}`} onClick={handleNavigation(item.id)} className="text-[13px] font-semibold text-white hover:text-main-purple tracking-widest">
+                        <a key={item.label} href={item.path ?? `#${item.id}`} onClick={handleNavigation(item.id)} className="text-[13px] font-semibold text-white hover:text-main-purple tracking-widest">
                             {item.label}
                         </a>
                     ))}
@@ -82,7 +90,7 @@ export const Navbar: React.FC = () => {
             <button onClick={() => setIsMobileMenuOpen(false)} className="absolute top-8 right-6 text-white p-2"><X className="w-8 h-8" /></button>
             <div className="flex flex-col gap-8 text-center">
                 {navItems.map((item) => (
-                    <a key={item.label} href={`#${item.id}`} onClick={handleNavigation(item.id)} className="text-3xl font-bold text-white tracking-widest hover:text-main-purple transition-colors">
+                    <a key={item.label} href={item.path ?? `#${item.id}`} onClick={handleNavigation(item.id)} className="text-3xl font-bold text-white tracking-widest hover:text-main-purple transition-colors">
                         {item.label}
                     </a>
                 ))}

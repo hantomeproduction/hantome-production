@@ -39,7 +39,7 @@ export const Home: React.FC = () => {
 
       <Navbar />
       <ScrollToTop />
-      
+
       <main className="snap-container h-[100dvh] w-full overflow-y-scroll snap-y snap-mandatory scroll-smooth relative z-10">
         <Hero />
         <Work />
