@@ -54,7 +54,7 @@ export const Navbar: React.FC = () => {
 
   return (
     <>
-        <div className={`fixed inset-x-0 top-0 z-[60] flex justify-between items-start px-6 py-8 transition-opacity duration-500 bg-transparent ${isHeroVisible ? 'opacity-100' : 'opacity-0'}`}>
+        <div className={`fixed inset-x-0 top-0 z-[60] flex justify-between items-start px-6 py-8 transition-opacity duration-500 bg-transparent ${isHeroVisible ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
             <a href="#" onClick={handleNavigation('hero')} className="group flex items-center">
                 <Logo className="h-6 md:h-7 text-white" />
             </a>
