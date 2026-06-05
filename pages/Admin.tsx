@@ -54,6 +54,16 @@ const csvCell = (value: unknown): string => {
   return `"${text.replaceAll('"', '""')}"`;
 };
 
+const getSafeHttpUrl = (value?: string): string => {
+  if (!value) return '';
+  try {
+    const url = new URL(value);
+    return url.protocol === 'http:' || url.protocol === 'https:' ? url.toString() : '';
+  } catch {
+    return '';
+  }
+};
+
 export const Admin: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [email, setEmail] = useState('');
@@ -755,11 +765,12 @@ const InquiryDetailCard = ({
 
 const DetailRow = ({ label, value, link }: { label: string; value?: string; link?: boolean }) => {
   const display = value || '-';
+  const safeUrl = link ? getSafeHttpUrl(value) : '';
   return (
     <div className="border-b border-white/5 pb-2">
       <div className="mb-1 font-mono text-[10px] uppercase tracking-wider text-gray-500">{label}</div>
-      {link && value ? (
-        <a href={value} target="_blank" rel="noopener noreferrer" className="break-all text-[#E2B6F7] hover:text-white">
+      {safeUrl ? (
+        <a href={safeUrl} target="_blank" rel="noopener noreferrer" className="break-all text-[#E2B6F7] hover:text-white">
           {value}
         </a>
       ) : (
