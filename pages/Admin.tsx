@@ -95,13 +95,16 @@ export const Admin: React.FC = () => {
   const fetchInquiries = async () => {
     setInquiriesLoading(true);
     try {
-      const q = query(collection(db, 'original_song_inquiries'), orderBy('createdAt', 'desc'));
-      const querySnapshot = await getDocs(q);
-      const data = querySnapshot.docs.map((d) => ({
+      const querySnapshot = await getDocs(collection(db, 'original_song_inquiries'));
+      const data = (querySnapshot.docs.map((d) => ({
         docId: d.id,
         status: 'new' as InquiryStatus,
         ...d.data(),
-      })) as OriginalSongInquiry[];
+      })) as OriginalSongInquiry[]).sort((a, b) => {
+        const ta = a.createdAt?.seconds ?? 0;
+        const tb = b.createdAt?.seconds ?? 0;
+        return tb - ta;
+      });
       setInquiries(data);
       setSelectedInquiry((current) => {
         if (!current) return data[0] || null;
