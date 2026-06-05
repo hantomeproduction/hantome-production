@@ -88,6 +88,7 @@ export const Admin: React.FC = () => {
   const [inquiryStatusFilter, setInquiryStatusFilter] = useState<'all' | InquiryStatus>('all');
   const [inquirySearch, setInquirySearch] = useState('');
   const [selectedInquiry, setSelectedInquiry] = useState<OriginalSongInquiry | null>(null);
+  const [selectedInquiryIds, setSelectedInquiryIds] = useState<string[]>([]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -116,6 +117,7 @@ export const Admin: React.FC = () => {
         return tb - ta;
       });
       setInquiries(data);
+      setSelectedInquiryIds((current) => current.filter((docId) => data.some((item) => item.docId === docId)));
       setSelectedInquiry((current) => {
         if (!current) return data[0] || null;
         return data.find((item) => item.docId === current.docId) || data[0] || null;
@@ -276,6 +278,29 @@ export const Admin: React.FC = () => {
       });
       return next;
     });
+    setSelectedInquiryIds((prev) => prev.filter((item) => item !== docId));
+  };
+
+  const deleteSelectedInquiries = async () => {
+    if (selectedInquiryIds.length === 0) return;
+    if (!window.confirm(`선택한 제작 문의 ${selectedInquiryIds.length}건을 삭제할까요? 이 작업은 되돌릴 수 없습니다.`)) return;
+
+    const batch = writeBatch(db);
+    selectedInquiryIds.forEach((docId) => {
+      batch.delete(doc(db, 'original_song_inquiries', docId));
+    });
+    await batch.commit();
+
+    setInquiries((prev) => {
+      const selectedSet = new Set(selectedInquiryIds);
+      const next = prev.filter((item) => !selectedSet.has(item.docId));
+      setSelectedInquiry((current) => {
+        if (!current || !selectedSet.has(current.docId)) return current;
+        return next[0] || null;
+      });
+      return next;
+    });
+    setSelectedInquiryIds([]);
   };
 
   if (!user) {
@@ -332,6 +357,20 @@ export const Admin: React.FC = () => {
     const searchMatches = !normalizedInquirySearch || searchTarget.includes(normalizedInquirySearch);
     return statusMatches && searchMatches;
   });
+  const filteredInquiryIds = filteredInquiries.map((item) => item.docId);
+  const selectedFilteredCount = selectedInquiryIds.filter((docId) => filteredInquiryIds.includes(docId)).length;
+  const allFilteredSelected = filteredInquiries.length > 0 && selectedFilteredCount === filteredInquiries.length;
+
+  const toggleInquirySelection = (docId: string) => {
+    setSelectedInquiryIds((prev) => (prev.includes(docId) ? prev.filter((item) => item !== docId) : [...prev, docId]));
+  };
+
+  const toggleAllFilteredInquiries = () => {
+    setSelectedInquiryIds((prev) => {
+      if (allFilteredSelected) return prev.filter((docId) => !filteredInquiryIds.includes(docId));
+      return Array.from(new Set([...prev, ...filteredInquiryIds]));
+    });
+  };
 
   const exportInquiriesCsv = () => {
     const header = ['접수일', '상태', '활동명', '이메일', '디스코드', 'X', '채널', '플랫폼', '목적', '납기', '패키지', '비주얼', '장르', '예산', '유입', '관리자 메모'];
@@ -400,6 +439,13 @@ export const Admin: React.FC = () => {
                 CSV 내보내기
               </button>
               <button
+                onClick={deleteSelectedInquiries}
+                disabled={selectedInquiryIds.length === 0}
+                className="bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 px-3 py-2 rounded-lg text-xs font-mono text-red-200 transition disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                선택 삭제 ({selectedInquiryIds.length})
+              </button>
+              <button
                 onClick={fetchInquiries}
                 className="bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-2 rounded-lg text-xs font-mono transition flex items-center gap-2"
               >
@@ -418,6 +464,15 @@ export const Admin: React.FC = () => {
                 <table className="w-full text-left text-xs">
                   <thead>
                     <tr className="text-gray-500 font-mono uppercase tracking-wider border-b border-white/10">
+                      <th className="py-3 pr-4 whitespace-nowrap">
+                        <input
+                          type="checkbox"
+                          checked={allFilteredSelected}
+                          onChange={toggleAllFilteredInquiries}
+                          className="h-4 w-4 cursor-pointer"
+                          style={{ accentColor: '#E2B6F7' }}
+                        />
+                      </th>
                       <th className="py-3 pr-4 whitespace-nowrap">접수일</th>
                       <th className="py-3 pr-4 whitespace-nowrap">활동명</th>
                       <th className="py-3 pr-4 whitespace-nowrap">연락처</th>
@@ -435,6 +490,16 @@ export const Admin: React.FC = () => {
                         onClick={() => setSelectedInquiry(item)}
                         className="border-b border-white/5 hover:bg-white/[0.04] transition-colors cursor-pointer"
                       >
+                        <td className="py-3 pr-4 whitespace-nowrap">
+                          <input
+                            type="checkbox"
+                            checked={selectedInquiryIds.includes(item.docId)}
+                            onClick={(e) => e.stopPropagation()}
+                            onChange={() => toggleInquirySelection(item.docId)}
+                            className="h-4 w-4 cursor-pointer"
+                            style={{ accentColor: '#E2B6F7' }}
+                          />
+                        </td>
                         <td className="py-3 pr-4 whitespace-nowrap text-gray-500 font-mono">{fmtDate(item.createdAt)}</td>
                         <td className="py-3 pr-4 whitespace-nowrap text-white font-medium">{item.creatorName || '-'}</td>
                         <td className="py-3 pr-4 whitespace-nowrap text-gray-400">
