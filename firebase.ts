@@ -2,7 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore"; // 👉 [추가 1] 창고 관리인 불러오기
-import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
+import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "firebase/app-check";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCtU8yR_aiKqXNpSsAIGakG-WaE_z035Xg",
@@ -16,7 +16,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 initializeAppCheck(app, {
-  provider: new ReCaptchaV3Provider("6LeGWw4tAAAAACfiHb7vJ1oR2Rj08KnTajL-Gs6F"),
+  provider: new ReCaptchaEnterpriseProvider("6LeGWw4tAAAAACfiHb7vJ1oR2Rj08KnTajL-Gs6F"),
   isTokenAutoRefreshEnabled: true,
 });
 export const auth = getAuth(app);
