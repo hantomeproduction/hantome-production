@@ -264,6 +264,20 @@ export const Admin: React.FC = () => {
     setSelectedInquiry((prev) => (prev?.docId === docId ? { ...prev, adminMemo } : prev));
   };
 
+  const deleteInquiry = async (docId: string, creatorName?: string) => {
+    const target = creatorName || docId;
+    if (!window.confirm(`제작 문의 접수 "${target}" 건을 삭제할까요? 이 작업은 되돌릴 수 없습니다.`)) return;
+    await deleteDoc(doc(db, 'original_song_inquiries', docId));
+    setInquiries((prev) => {
+      const next = prev.filter((item) => item.docId !== docId);
+      setSelectedInquiry((current) => {
+        if (current?.docId !== docId) return current;
+        return next[0] || null;
+      });
+      return next;
+    });
+  };
+
   if (!user) {
     return (
       <div className="min-h-screen bg-black text-white flex flex-col">
@@ -411,6 +425,7 @@ export const Admin: React.FC = () => {
                       <th className="py-3 pr-4 whitespace-nowrap">장르</th>
                       <th className="py-3 pr-4 whitespace-nowrap">예산</th>
                       <th className="py-3 pr-4 whitespace-nowrap">상태</th>
+                      <th className="py-3 pr-4 whitespace-nowrap">삭제</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -441,6 +456,17 @@ export const Admin: React.FC = () => {
                             ))}
                           </select>
                         </td>
+                        <td className="py-3 pr-4 whitespace-nowrap">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              deleteInquiry(item.docId, item.creatorName);
+                            }}
+                            className="rounded border border-red-500/30 px-2 py-1 text-[11px] text-red-300 hover:bg-red-500/10 transition"
+                          >
+                            삭제
+                          </button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -452,6 +478,7 @@ export const Admin: React.FC = () => {
                 fmtDate={fmtDate}
                 onStatusChange={updateInquiryStatus}
                 onMemoSave={updateInquiryMemo}
+                onDelete={deleteInquiry}
               />
             </div>
           )}
@@ -678,11 +705,13 @@ const InquiryDetailCard = ({
   fmtDate,
   onStatusChange,
   onMemoSave,
+  onDelete,
 }: {
   inquiry: OriginalSongInquiry | null;
   fmtDate: (ts: any) => string;
   onStatusChange: (docId: string, status: InquiryStatus) => void;
   onMemoSave: (docId: string, adminMemo: string) => void;
+  onDelete: (docId: string, creatorName?: string) => void;
 }) => {
   const [memoDraft, setMemoDraft] = useState('');
 
@@ -757,6 +786,12 @@ const InquiryDetailCard = ({
           className="mt-3 w-full rounded-lg bg-[#E2B6F7] px-4 py-3 text-xs font-bold text-black hover:brightness-110 transition"
         >
           메모 저장
+        </button>
+        <button
+          onClick={() => onDelete(inquiry.docId, inquiry.creatorName)}
+          className="mt-3 w-full rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-xs font-bold text-red-200 hover:bg-red-500/20 transition"
+        >
+          접수 삭제
         </button>
       </div>
     </div>
