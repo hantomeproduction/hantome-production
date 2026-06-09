@@ -70,8 +70,8 @@ export const BgmForm: React.FC<{ sourceParam: string; onReset: () => void }> = (
 
   const valid: Record<number, boolean> = {
     1: creatorName.trim().length > 0 && platforms.length > 0 && channelUrl.trim().length > 0,
-    2: selectedItems.length > 0,
-    3: scale !== '' && tones.length > 0,
+    2: selectedItems.length > 0 && scale !== '',
+    3: tones.length > 0,
     4: useCases.length > 0,
     5: budget !== '' && policyChecked,
     6: email.trim().length > 0 && discord.trim().length > 0 && sourceAnswer !== '' && agree,
@@ -168,14 +168,9 @@ export const BgmForm: React.FC<{ sourceParam: string; onReset: () => void }> = (
               </div>
             </div>
           ))}
-          <NavRow nextDisabled={!valid[2]} onNext={next} onBack={back} />
-        </StepWrap>
-      )}
 
-      {screen === 3 && (
-        <StepWrap step={3} total={TOTAL} title="규모 & 분위기" desc="제작 규모와 채널 분위기를 선택해 주세요.">
           <FieldLabel>제작 규모</FieldLabel>
-          <div className="mb-6 grid gap-3">
+          <div className="mb-5 grid gap-3">
             {SCALE_OPTIONS.map(({ label, desc }) => (
               <button
                 key={label}
@@ -196,7 +191,12 @@ export const BgmForm: React.FC<{ sourceParam: string; onReset: () => void }> = (
               </button>
             ))}
           </div>
+          <NavRow nextDisabled={!valid[2]} onNext={next} onBack={back} />
+        </StepWrap>
+      )}
 
+      {screen === 3 && (
+        <StepWrap step={3} total={TOTAL} title="분위기 & 채널" desc="채널 분위기와 세계관을 알려주세요.">
           <FieldLabel>분위기·톤 <span className="font-normal text-[#62626c]">(복수 선택 가능)</span></FieldLabel>
           <div className="mb-5 flex flex-wrap gap-2.5">
             {TONES.map((t) => (

@@ -56,15 +56,17 @@ export const OriginalSong: React.FC = () => {
           'radial-gradient(circle at 32% 18%, rgba(153, 93, 255, 0.22), transparent 28%), radial-gradient(circle at 70% 76%, rgba(226, 182, 247, 0.14), transparent 30%), #050506',
       }}
     >
-      <div className="mx-auto flex min-h-[calc(100vh-80px)] w-full max-w-[760px] flex-col justify-center">
+      <div className="mx-auto flex min-h-[calc(100vh-80px)] w-full max-w-[760px] flex-col justify-center" style={{ zoom: 1.1 }}>
 
         {/* Header */}
         <div className="mb-[30px] flex items-center justify-between gap-4">
-          <img
-            src="/logo.png"
-            alt="Hantome Production"
-            className="h-[60px] w-[168px] object-contain object-left drop-shadow-[0_0_18px_rgba(226,182,247,0.18)] max-[720px]:h-12 max-[720px]:w-[134px]"
-          />
+          <a href="/" aria-label="홈으로">
+            <img
+              src="/logo.png"
+              alt="Hantome Production"
+              className="h-[60px] w-[168px] object-contain object-left drop-shadow-[0_0_18px_rgba(226,182,247,0.18)] max-[720px]:h-12 max-[720px]:w-[134px] cursor-pointer"
+            />
+          </a>
           {sourceParam && (
             <div className="whitespace-nowrap rounded-full border border-[rgba(226,182,247,0.42)] bg-[rgba(226,182,247,0.08)] px-3 py-2 text-xs text-[#E2B6F7]">
               {sourceParam} 유입 링크

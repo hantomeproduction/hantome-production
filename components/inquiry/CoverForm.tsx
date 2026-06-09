@@ -156,7 +156,7 @@ export const CoverForm: React.FC<{ sourceParam: string; onReset: () => void }> =
               selected={packageName === 'Basic'}
               onClick={() => setPackageName('Basic')}
               bullets={['MR 구해서 사용', '보컬 튜닝·믹싱', '기본 마스터링']}
-              recommend="MR이 이미 있거나 직접 구할 수 있는 경우"
+              recommend="MR이 이미 있는 경우"
             />
             <PackageCard
               name="Standard"
@@ -164,7 +164,7 @@ export const CoverForm: React.FC<{ sourceParam: string; onReset: () => void }> =
               selected={packageName === 'Standard'}
               onClick={() => setPackageName('Standard')}
               bullets={['인스트루멘탈 별도 제작', '보컬 디렉팅', '믹싱/마스터링']}
-              recommend="퀄리티 있는 커버를 처음 제작하는 경우"
+              recommend="퀄리티 있는 커버를 원할 경우"
             />
             <PackageCard
               name="Premium"
