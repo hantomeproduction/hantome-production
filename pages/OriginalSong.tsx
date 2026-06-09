@@ -51,7 +51,7 @@ export const OriginalSong: React.FC = () => {
     <main
       className="min-h-screen px-4 py-10 text-[#ececf2]"
       style={{
-        fontFamily: "'Paperlogy', 'Apple SD Gothic Neo', sans-serif",
+        fontFamily: "'Paperozi', 'Apple SD Gothic Neo', sans-serif",
         background:
           'radial-gradient(circle at 32% 18%, rgba(153, 93, 255, 0.22), transparent 28%), radial-gradient(circle at 70% 76%, rgba(226, 182, 247, 0.14), transparent 30%), #050506',
       }}
