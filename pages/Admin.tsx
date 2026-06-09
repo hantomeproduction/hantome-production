@@ -8,28 +8,42 @@ import { ChevronUp, ChevronDown, RefreshCcw, Save } from 'lucide-react';
 
 type InquiryStatus = 'new' | 'contacted' | 'quoting' | 'won' | 'lost' | 'archived';
 
+type InquiryType = 'original' | 'cover' | 'bgm';
+
+const INQUIRY_TYPE_LABELS: Record<InquiryType, string> = {
+  original: '오리지널',
+  cover: '커버',
+  bgm: 'BGM',
+};
+
 type OriginalSongInquiry = {
   docId: string;
+  inquiryType?: InquiryType;
   sourceParam?: string;
   creatorName?: string;
   platforms?: string[];
   channelUrl?: string;
+  // original
   purpose?: string;
   deadline?: string;
   packageName?: string;
   visualScope?: string;
   genres?: string[];
   styles?: Record<string, string>;
-  selectedReference?: {
-    artist?: string;
-    title?: string;
-    url?: string;
-    style?: string;
-    views?: string;
-  } | null;
+  selectedReference?: { artist?: string; title?: string; url?: string; style?: string; views?: string } | null;
   customReferences?: string;
   readyMaterials?: string[];
   memo?: string;
+  // cover
+  coverSongs?: string;
+  // bgm
+  selectedItems?: string[];
+  scale?: string;
+  tones?: string[];
+  channelColor?: string;
+  useCases?: string[];
+  references?: string;
+  // common
   budget?: string;
   email?: string;
   discord?: string;
@@ -85,6 +99,7 @@ export const Admin: React.FC = () => {
   const [appsSort, setAppsSort] = useState<'createdAt' | 'email'>('createdAt');
   const [inquiries, setInquiries] = useState<OriginalSongInquiry[]>([]);
   const [inquiriesLoading, setInquiriesLoading] = useState(false);
+  const [inquiryTypeFilter, setInquiryTypeFilter] = useState<'all' | InquiryType>('all');
   const [inquiryStatusFilter, setInquiryStatusFilter] = useState<'all' | InquiryStatus>('all');
   const [inquirySearch, setInquirySearch] = useState('');
   const [selectedInquiry, setSelectedInquiry] = useState<OriginalSongInquiry | null>(null);
@@ -106,7 +121,7 @@ export const Admin: React.FC = () => {
   const fetchInquiries = async () => {
     setInquiriesLoading(true);
     try {
-      const querySnapshot = await getDocs(collection(db, 'original_song_inquiries'));
+      const querySnapshot = await getDocs(collection(db, 'production_inquiries'));
       const data = (querySnapshot.docs.map((d) => ({
         docId: d.id,
         status: 'new' as InquiryStatus,
@@ -249,7 +264,7 @@ export const Admin: React.FC = () => {
   };
 
   const updateInquiryStatus = async (docId: string, status: InquiryStatus) => {
-    await updateDoc(doc(db, 'original_song_inquiries', docId), {
+    await updateDoc(doc(db, 'production_inquiries', docId), {
       status,
       updatedAt: serverTimestamp(),
     });
@@ -258,7 +273,7 @@ export const Admin: React.FC = () => {
   };
 
   const updateInquiryMemo = async (docId: string, adminMemo: string) => {
-    await updateDoc(doc(db, 'original_song_inquiries', docId), {
+    await updateDoc(doc(db, 'production_inquiries', docId), {
       adminMemo,
       updatedAt: serverTimestamp(),
     });
@@ -269,7 +284,7 @@ export const Admin: React.FC = () => {
   const deleteInquiry = async (docId: string, creatorName?: string) => {
     const target = creatorName || docId;
     if (!window.confirm(`제작 문의 접수 "${target}" 건을 삭제할까요? 이 작업은 되돌릴 수 없습니다.`)) return;
-    await deleteDoc(doc(db, 'original_song_inquiries', docId));
+    await deleteDoc(doc(db, 'production_inquiries', docId));
     setInquiries((prev) => {
       const next = prev.filter((item) => item.docId !== docId);
       setSelectedInquiry((current) => {
@@ -287,7 +302,7 @@ export const Admin: React.FC = () => {
 
     const batch = writeBatch(db);
     selectedInquiryIds.forEach((docId) => {
-      batch.delete(doc(db, 'original_song_inquiries', docId));
+      batch.delete(doc(db, 'production_inquiries', docId));
     });
     await batch.commit();
 
@@ -343,6 +358,7 @@ export const Admin: React.FC = () => {
   const filteredInquiries = inquiries.filter((item) => {
     const status = item.status || 'new';
     const statusMatches = inquiryStatusFilter === 'all' || status === inquiryStatusFilter;
+    const typeMatches = inquiryTypeFilter === 'all' || (item.inquiryType || 'original') === inquiryTypeFilter;
     const searchTarget = [
       item.creatorName,
       item.email,
@@ -355,7 +371,7 @@ export const Admin: React.FC = () => {
       item.purpose,
     ].filter(Boolean).join(' ').toLowerCase();
     const searchMatches = !normalizedInquirySearch || searchTarget.includes(normalizedInquirySearch);
-    return statusMatches && searchMatches;
+    return statusMatches && typeMatches && searchMatches;
   });
   const filteredInquiryIds = filteredInquiries.map((item) => item.docId);
   const selectedFilteredCount = selectedInquiryIds.filter((docId) => filteredInquiryIds.includes(docId)).length;
@@ -373,25 +389,29 @@ export const Admin: React.FC = () => {
   };
 
   const exportInquiriesCsv = () => {
-    const header = ['접수일', '상태', '활동명', '이메일', '디스코드', 'X', '채널', '플랫폼', '목적', '납기', '패키지', '비주얼', '장르', '예산', '유입', '관리자 메모'];
-    const rows = filteredInquiries.map((item) => [
-      fmtDate(item.createdAt),
-      INQUIRY_STATUS_OPTIONS.find((option) => option.value === (item.status || 'new'))?.label || '신규',
-      item.creatorName,
-      item.email,
-      item.discord,
-      item.xAccount,
-      item.channelUrl,
-      item.platforms,
-      item.purpose,
-      item.deadline,
-      item.packageName,
-      item.visualScope,
-      item.genres,
-      item.budget,
-      item.sourceParam || item.sourceAnswer,
-      item.adminMemo,
-    ]);
+    const header = ['접수일', '유형', '상태', '활동명', '이메일', '디스코드', 'X', '채널', '플랫폼', '내용', '예산', '유입', '관리자 메모'];
+    const rows = filteredInquiries.map((item) => {
+      const typeLabel = INQUIRY_TYPE_LABELS[item.inquiryType || 'original'];
+      let content = '';
+      if (item.inquiryType === 'cover') content = item.coverSongs || '';
+      else if (item.inquiryType === 'bgm') content = Array.isArray(item.selectedItems) ? item.selectedItems.join(', ') : '';
+      else content = [item.purpose, item.packageName, Array.isArray(item.genres) ? item.genres.join('/') : ''].filter(Boolean).join(' | ');
+      return [
+        fmtDate(item.createdAt),
+        typeLabel,
+        INQUIRY_STATUS_OPTIONS.find((option) => option.value === (item.status || 'new'))?.label || '신규',
+        item.creatorName,
+        item.email,
+        item.discord,
+        item.xAccount,
+        item.channelUrl,
+        item.platforms,
+        content,
+        item.budget,
+        item.sourceParam || item.sourceAnswer,
+        item.adminMemo,
+      ];
+    });
     const csv = [header, ...rows].map((row) => row.map(csvCell).join(',')).join('\n');
     const blob = new Blob([`\uFEFF${csv}`], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -422,6 +442,16 @@ export const Admin: React.FC = () => {
                 placeholder="활동명 / 이메일 / 디스코드 검색"
                 className="bg-black border border-white/10 px-3 py-2 rounded-lg text-xs outline-none focus:border-[#E2B6F7] min-w-[240px]"
               />
+              <select
+                value={inquiryTypeFilter}
+                onChange={(e) => setInquiryTypeFilter(e.target.value as 'all' | InquiryType)}
+                className="bg-black border border-white/10 px-3 py-2 rounded-lg text-xs font-mono outline-none focus:border-[#E2B6F7] cursor-pointer"
+              >
+                <option value="all">전체 유형</option>
+                <option value="original">오리지널</option>
+                <option value="cover">커버</option>
+                <option value="bgm">BGM</option>
+              </select>
               <select
                 value={inquiryStatusFilter}
                 onChange={(e) => setInquiryStatusFilter(e.target.value as 'all' | InquiryStatus)}
@@ -474,10 +504,10 @@ export const Admin: React.FC = () => {
                         />
                       </th>
                       <th className="py-3 pr-4 whitespace-nowrap">접수일</th>
+                      <th className="py-3 pr-4 whitespace-nowrap">유형</th>
                       <th className="py-3 pr-4 whitespace-nowrap">활동명</th>
                       <th className="py-3 pr-4 whitespace-nowrap">연락처</th>
-                      <th className="py-3 pr-4 whitespace-nowrap">패키지</th>
-                      <th className="py-3 pr-4 whitespace-nowrap">장르</th>
+                      <th className="py-3 pr-4 whitespace-nowrap">내용</th>
                       <th className="py-3 pr-4 whitespace-nowrap">예산</th>
                       <th className="py-3 pr-4 whitespace-nowrap">상태</th>
                       <th className="py-3 pr-4 whitespace-nowrap">삭제</th>
@@ -501,13 +531,21 @@ export const Admin: React.FC = () => {
                           />
                         </td>
                         <td className="py-3 pr-4 whitespace-nowrap text-gray-500 font-mono">{fmtDate(item.createdAt)}</td>
+                        <td className="py-3 pr-4 whitespace-nowrap">
+                          <span className={['rounded-full px-2 py-0.5 text-[11px] font-bold font-mono', item.inquiryType === 'cover' ? 'bg-blue-500/15 text-blue-300' : item.inquiryType === 'bgm' ? 'bg-green-500/15 text-green-300' : 'bg-[rgba(226,182,247,0.15)] text-[#E2B6F7]'].join(' ')}>
+                            {INQUIRY_TYPE_LABELS[item.inquiryType || 'original']}
+                          </span>
+                        </td>
                         <td className="py-3 pr-4 whitespace-nowrap text-white font-medium">{item.creatorName || '-'}</td>
                         <td className="py-3 pr-4 whitespace-nowrap text-gray-400">
                           <div className="text-[#E2B6F7]">{item.email || '-'}</div>
                           <div>{item.discord || '-'}</div>
                         </td>
-                        <td className="py-3 pr-4 whitespace-nowrap text-gray-400">{item.packageName || '-'}</td>
-                        <td className="py-3 pr-4 whitespace-nowrap text-gray-400">{Array.isArray(item.genres) ? item.genres.join(', ') : '-'}</td>
+                        <td className="py-3 pr-4 whitespace-nowrap text-gray-400 text-[11px]">
+                          {item.inquiryType === 'cover' && (item.coverSongs?.split('\n')[0] || '-')}
+                          {item.inquiryType === 'bgm' && (Array.isArray(item.selectedItems) ? item.selectedItems.slice(0, 2).join(', ') : '-')}
+                          {(!item.inquiryType || item.inquiryType === 'original') && (item.packageName || '-')}
+                        </td>
                         <td className="py-3 pr-4 whitespace-nowrap text-gray-400">{item.budget || '-'}</td>
                         <td className="py-3 pr-4 whitespace-nowrap">
                           <select
@@ -800,11 +838,18 @@ const InquiryDetailCard = ({
     ? `${inquiry.selectedReference.artist || '-'} - ${inquiry.selectedReference.title || '-'}`
     : inquiry.customReferences || '-';
 
+  const type = inquiry.inquiryType || 'original';
+
   return (
     <div className="rounded-xl border border-white/10 bg-black/40 p-5 text-sm text-gray-300 xl:sticky xl:top-28 self-start">
       <div className="flex items-start justify-between gap-4 mb-4">
         <div>
-          <div className="text-xs font-mono text-[#E2B6F7] mb-1">{fmtDate(inquiry.createdAt)}</div>
+          <div className="flex items-center gap-2 mb-1">
+            <span className={['rounded-full px-2 py-0.5 text-[11px] font-bold font-mono', type === 'cover' ? 'bg-blue-500/15 text-blue-300' : type === 'bgm' ? 'bg-green-500/15 text-green-300' : 'bg-[rgba(226,182,247,0.15)] text-[#E2B6F7]'].join(' ')}>
+              {INQUIRY_TYPE_LABELS[type]}
+            </span>
+            <span className="text-xs font-mono text-[#E2B6F7]">{fmtDate(inquiry.createdAt)}</span>
+          </div>
           <h3 className="text-xl font-bold text-white">{inquiry.creatorName || '-'}</h3>
           <div className="text-xs text-gray-500 mt-1">{inquiry.sourceParam || inquiry.sourceAnswer || '유입 미기록'}</div>
         </div>
@@ -825,15 +870,42 @@ const InquiryDetailCard = ({
         <DetailRow label="X" value={inquiry.xAccount} />
         <DetailRow label="채널" value={inquiry.channelUrl} link />
         <DetailRow label="플랫폼" value={Array.isArray(inquiry.platforms) ? inquiry.platforms.join(', ') : '-'} />
-        <DetailRow label="목적/납기" value={`${inquiry.purpose || '-'} / ${inquiry.deadline || '-'}`} />
-        <DetailRow label="패키지" value={`${inquiry.packageName || '-'} / ${inquiry.visualScope || '-'}`} />
-        <DetailRow label="장르/스타일" value={`${Array.isArray(inquiry.genres) ? inquiry.genres.join(', ') : '-'} / ${stylesText}`} />
-        {inquiry.selectedReference?.url ? (
-          <DetailRow label="레퍼런스" value={`${referenceText}\n${inquiry.selectedReference.url}`} />
-        ) : (
-          <DetailRow label="레퍼런스" value={referenceText} />
+
+        {type === 'original' && (
+          <>
+            <DetailRow label="목적/납기" value={`${inquiry.purpose || '-'} / ${inquiry.deadline || '-'}`} />
+            <DetailRow label="패키지" value={`${inquiry.packageName || '-'} / ${inquiry.visualScope || '-'}`} />
+            <DetailRow label="장르/스타일" value={`${Array.isArray(inquiry.genres) ? inquiry.genres.join(', ') : '-'} / ${stylesText}`} />
+            {inquiry.selectedReference?.url ? (
+              <DetailRow label="레퍼런스" value={`${referenceText}\n${inquiry.selectedReference.url}`} />
+            ) : (
+              <DetailRow label="레퍼런스" value={referenceText} />
+            )}
+            <DetailRow label="준비 자료" value={Array.isArray(inquiry.readyMaterials) ? inquiry.readyMaterials.join(', ') : '-'} />
+          </>
         )}
-        <DetailRow label="준비 자료" value={Array.isArray(inquiry.readyMaterials) ? inquiry.readyMaterials.join(', ') : '-'} />
+
+        {type === 'cover' && (
+          <>
+            <DetailRow label="커버 원곡" value={inquiry.coverSongs} />
+            <DetailRow label="공개 목적" value={inquiry.purpose} />
+            <DetailRow label="패키지" value={`${inquiry.packageName || '-'} / ${inquiry.visualScope || '-'}`} />
+            <DetailRow label="준비 자료" value={Array.isArray(inquiry.readyMaterials) ? inquiry.readyMaterials.join(', ') : '-'} />
+            <DetailRow label="참고곡" value={inquiry.customReferences} />
+          </>
+        )}
+
+        {type === 'bgm' && (
+          <>
+            <DetailRow label="필요 항목" value={Array.isArray(inquiry.selectedItems) ? inquiry.selectedItems.join(', ') : '-'} />
+            <DetailRow label="규모" value={inquiry.scale} />
+            <DetailRow label="분위기·톤" value={Array.isArray(inquiry.tones) ? inquiry.tones.join(', ') : '-'} />
+            <DetailRow label="채널 컬러" value={inquiry.channelColor} />
+            <DetailRow label="사용처" value={Array.isArray(inquiry.useCases) ? inquiry.useCases.join(', ') : '-'} />
+            <DetailRow label="레퍼런스" value={inquiry.references} />
+          </>
+        )}
+
         <DetailRow label="예산" value={inquiry.budget} />
         <DetailRow label="제작 메모" value={inquiry.memo} />
       </div>
